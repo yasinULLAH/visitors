@@ -48,6 +48,10 @@ if (workbox) {
         "revision": "3d68d791052605e8692bab71b396a5f8"
     },
     {
+        "url": ".gitattributes",
+        "revision": "05bdb783ee6514c8c072e47680af8ff7"
+    },
+    {
         "url": "build pwa make php app offline and installable yasin best working re-run this for updates new.py",
         "revision": "2aeda70e7a739f6a0ee3671898caeb01"
     },
@@ -57,7 +61,7 @@ if (workbox) {
     },
     {
         "url": "index.html",
-        "revision": "f2d63772ff0c6607c06369a7b904a17d"
+        "revision": "8c48af7ab6453d638f3151b60d060012"
     },
     {
         "url": "logo.jpg",
@@ -72,8 +76,12 @@ if (workbox) {
         "revision": "35337d1b1ac3cd8b168373daa82c6e3b"
     },
     {
+        "url": "readme file for visitors.html.pdf",
+        "revision": "cd7767728555c1a8c855bff8f43882be"
+    },
+    {
         "url": "sw.js",
-        "revision": "092803fba7a22c86e35fa62384cdd137"
+        "revision": "554ffb3ab73e0bd5e8a5c6415dad4b18"
     }
 ]);
 
