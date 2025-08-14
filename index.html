@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 
 <html dir="rtl" lang="ur">
+
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<meta content="Yasin Ullah, Pakistan" name="author"/>
-<meta content="دارالایمان کربوغہ شریف - دینی مدرسہ زائرین کا انتظام" name="description"/>
-<meta content="مدرسہ, زائرین, انتظام, دارالایمان, کربوغہ شریف" name="keywords"/>
-<title> دارالایمان کربوغہ شریف - زائرین کا انتظام </title>
-<style>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="Yasin Ullah, Pakistan" name="author" />
+    <meta content="دارالایمان کربوغہ شریف - دینی مدرسہ زائرین کا انتظام" name="description" />
+    <meta content="مدرسہ, زائرین, انتظام, دارالایمان, کربوغہ شریف, رپورٹس, تجزیات" name="keywords" />
+    <title>دارالایمان کربوغہ شریف - زائرین کا انتظام</title>
+    <style>
         * {
             margin: 0;
             padding: 0;
@@ -291,6 +292,11 @@
             background: linear-gradient(135deg, rgba(52, 168, 83, 0.1), rgba(52, 168, 83, 0.05));
         }
 
+        .visitor-card.overstay {
+            border-color: var(--danger-color);
+            background: linear-gradient(135deg, rgba(234, 67, 53, 0.1), rgba(234, 67, 53, 0.05));
+        }
+
         .visitor-header {
             display: flex;
             justify-content: space-between;
@@ -385,7 +391,7 @@
             cursor: pointer;
             font-size: 1rem;
             text-decoration: underline;
-            margin-bottom: 15px;
+            margin-top: 15px;
         }
 
         .modal {
@@ -638,7 +644,7 @@
 
         .charts-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 25px;
             margin-bottom: 30px;
         }
@@ -657,441 +663,517 @@
             font-size: 1.2rem;
             font-weight: bold;
         }
+
+        .reports-grouped-section .reports-section {
+            margin-bottom: 15px;
+        }
     </style>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<link href="manifest.json" rel="manifest"/><link rel="icon" type="image/x-icon" href="favicon.ico">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="manifest.json" rel="manifest" />
 </head>
+
 <body>
-<div class="container">
-<header class="header">
-<button class="dark-toggle" onclick="toggleDarkMode()">🌙 ڈارک موڈ</button>
-<h1>دارالایمان کربوغہ شریف</h1>
-<p>زائرین کا انتظام</p>
-</header>
-<nav class="nav-tabs">
-<button class="nav-tab active" data-tab="dashboard">ڈیش بورڈ</button>
-<button class="nav-tab" data-tab="visitors">زائرین کی فہرست</button>
-<button class="nav-tab" data-tab="add-visitor">نیا زائر</button>
-<button class="nav-tab" data-tab="reports">رپورٹس</button>
-<button class="nav-tab" data-tab="analytics">تجزیات</button>
-<button class="nav-tab" data-tab="settings">سیٹنگز</button>
-</nav>
-<div class="tab-content active" id="dashboard">
-<div class="stats-grid">
-<div class="stat-card">
-<h3 id="total-visitors">0</h3>
-<p>کل زائرین</p>
-</div>
-<div class="stat-card">
-<h3 id="total-attendees">0</h3>
-<p>کل حاضری</p>
-</div>
-<div class="stat-card">
-<h3 id="today-visitors">0</h3>
-<p>آج کے زائرین</p>
-</div>
-<div class="stat-card">
-<h3 id="present-visitors">0</h3>
-<p>موجودہ زائرین</p>
-</div>
-<div class="stat-card">
-<h3 id="present-attendees">0</h3>
-<p>موجودہ حاضری</p>
-</div>
-<div class="stat-card">
-<h3 id="total-groups">0</h3>
-<p>کل گروپس</p>
-</div>
-<div class="stat-card">
-<h3 id="average-stay">0</h3>
-<p>اوسط قیام (دن)</p>
-</div>
-<div class="stat-card">
-<h3 id="monthly-growth">0%</h3>
-<p>ماہانہ اضافہ</p>
-</div>
-</div>
-<div class="reports-section">
-<h3>حالیہ زائرین</h3>
-<div id="recent-visitors"></div>
-<button class="btn" onclick="showTab('visitors')">تمام زائرین دیکھیں</button>
-</div>
-</div>
-<div class="tab-content" id="visitors">
-<div class="search-box">
-<input class="search-input" id="global-search" oninput="globalSearch()" placeholder="نام، فون، پتہ، یا مقصد سے تلاش کریں..." type="text"/>
-<button class="filter-toggle" onclick="toggleAdvancedFilters()">تفصیلی فلٹرز</button>
-</div>
-<div class="filters advanced-filters" id="advanced-filters">
-<div class="filter-grid">
-<div class="form-group">
-<label>تاریخ سے</label>
-<input id="filter-date-from" onchange="filterVisitors()" type="date"/>
-</div>
-<div class="form-group">
-<label>تاریخ تک</label>
-<input id="filter-date-to" onchange="filterVisitors()" type="date"/>
-</div>
-<div class="form-group">
-<label>قسم</label>
-<select id="filter-type" onchange="filterVisitors()">
-<option value="">تمام</option>
-<option value="فرد">فرد</option>
-<option value="گروپ">گروپ</option>
-</select>
-</div>
-<div class="form-group">
-<label>موجودگی</label>
-<select id="filter-status" onchange="filterVisitors()">
-<option value="">تمام</option>
-<option value="present">موجود</option>
-<option value="absent">غیر موجود</option>
-</select>
-</div>
-<div class="form-group">
-<label>شہر</label>
-<select id="filter-city" onchange="filterVisitors()">
-<option value="">تمام شہر</option>
-</select>
-</div>
-<div class="form-group">
-<label>مقصد</label>
-<select id="filter-purpose" onchange="filterVisitors()">
-<option value="">تمام مقاصد</option>
-</select>
-</div>
-</div>
-<div style="margin-top: 15px;">
-<button class="btn btn-warning" onclick="clearAllFilters()">فلٹرز صاف کریں</button>
-<button class="btn btn-info" onclick="exportFiltered()">فلٹرڈ ڈیٹا ایکسپورٹ</button>
-</div>
-</div>
-<div class="bulk-actions" id="bulk-actions">
-<button class="btn btn-danger" onclick="bulkDelete()">منتخب کردہ حذف کریں</button>
-<button class="btn btn-info" onclick="bulkExport()">منتخب کردہ ایکسپورٹ</button>
-<button class="btn btn-warning" onclick="clearSelection()">انتخاب صاف کریں</button>
-</div>
-<div id="visitors-list"></div>
-<div class="pagination" id="pagination"></div>
-</div>
-<div class="tab-content" id="add-visitor">
-<h3>نیا زائر شامل کریں</h3>
-<form id="visitor-form">
-<div class="form-grid">
-<div class="form-group">
-<label>نام *</label>
-<input id="visitor-name" required="" type="text"/>
-</div>
-<div class="form-group">
-<label>فون نمبر</label>
-<input id="visitor-phone" type="tel"/>
-</div>
-<div class="form-group autocomplete-container">
-<label>پتہ</label>
-<textarea id="visitor-address" oninput="handleAddressAutocomplete(this.value)" rows="3"></textarea>
-<div class="autocomplete-suggestions" id="address-suggestions"></div>
-</div>
-<div class="form-group">
-<label>تاریخ آمد *</label>
-<input id="arrival-date" onchange="updateDepartureDate()" required="" type="date"/>
-</div>
-<div class="form-group">
-<label>تاریخ روانگی</label>
-<input id="departure-date" onchange="updateStayDuration()" type="date"/>
-</div>
-<div class="form-group">
-<label>قیام کے دن</label>
-<input id="stay-duration" min="0" oninput="updateDepartureDate()" placeholder="مثلاً 5" type="number"/>
-</div>
-<div class="form-group">
-<label>قسم *</label>
-<select id="visitor-type" onchange="toggleGroupCount()" required="">
-<option value="">منتخب کریں</option>
-<option value="فرد">فرد</option>
-<option value="گروپ">گروپ</option>
-</select>
-</div>
-<div class="form-group" id="group-count-section" style="display: none;">
-<label>افراد کی تعداد *</label>
-<input id="group-count" max="1000" min="1" type="number"/>
-</div>
-<div class="form-group">
-<label>مقصد</label>
-<select id="visit-purpose-select" onchange="handlePurposeSelect()">
-<option value="">منتخب کریں یا نیا لکھیں</option>
-<option value="مذہبی تعلیم">مذہبی تعلیم</option>
-<option value="زیارت">زیارت</option>
-<option value="دعا اور تلاوت">دعا اور تلاوت</option>
-<option value="مذہبی اجتماع">مذہبی اجتماع</option>
-<option value="عرس شریف">عرس شریف</option>
-<option value="custom">نیا مقصد</option>
-</select>
-<textarea id="visit-purpose" placeholder="اپنا مقصد لکھیں" rows="2" style="margin-top: 10px; display: none;"></textarea>
-</div>
-<div class="form-group">
-<label>گروپ ٹیگ</label>
-<input id="group-tag" placeholder="اختیاری - گروپ کا نام یا ٹیگ" type="text"/>
-</div>
-<div class="form-group">
-<label>ذمہ دار شخص</label>
-<input id="responsible-person" placeholder="گروپ کے ذمہ دار کا نام" type="text"/>
-</div>
-<div class="form-group">
-<label>خصوصی نوٹس</label>
-<textarea id="special-notes" placeholder="کوئی خصوصی ہدایات یا نوٹس" rows="2"></textarea>
-</div>
-</div>
-<button class="btn" type="submit">زائر شامل کریں</button>
-<button class="btn btn-warning" onclick="resetForm()" type="button">صاف کریں</button>
-<button class="btn btn-info" onclick="quickAddGroup()" type="button">فوری گروپ اندراج</button>
-</form>
-</div>
-<div class="tab-content" id="reports">
-<div class="search-box">
-<input class="search-input" id="report-search" oninput="searchReports()" placeholder="رپورٹ میں تلاش کریں..." type="text"/>
-</div>
-<div class="reports-section">
-<h3>رپورٹ فلٹرز</h3>
-<div class="report-filters">
-<div class="form-group">
-<label>تاریخ سے</label>
-<input id="report-date-from" onchange="generateReports()" type="date"/>
-</div>
-<div class="form-group">
-<label>تاریخ تک</label>
-<input id="report-date-to" onchange="generateReports()" type="date"/>
-</div>
-<div class="form-group">
-<label>رپورٹ کی قسم</label>
-<select id="report-type" onchange="generateReports()">
-<option value="all">تمام ڈیٹا</option>
-<option value="daily">یومیہ</option>
-<option value="weekly">ہفتہ وار</option>
-<option value="monthly">ماہانہ</option>
-<option value="yearly">سالانہ</option>
-<option value="custom">حسب ضرورت</option>
-</select>
-</div>
-<div class="form-group">
-<label>گروپ بذریعہ</label>
-<select id="group-by" onchange="generateReports()">
-<option value="none">کوئی گروپنگ نہیں</option>
-<option value="city">شہر کے حساب سے</option>
-<option value="purpose">مقصد کے حساب سے</option>
-<option value="type">قسم کے حساب سے</option>
-<option value="month">ماہ کے حساب سے</option>
-</select>
-</div>
-</div>
-</div>
-<div class="export-buttons">
-<button class="btn btn-success" onclick="exportToExcel('filtered')">فلٹرڈ ڈیٹا Excel</button>
-<button class="btn btn-success" onclick="exportToExcel('summary')">خلاصہ رپورٹ Excel</button>
-<button class="btn btn-success" onclick="exportToExcel('detailed')">تفصیلی رپورٹ Excel</button>
-<button class="btn btn-info" onclick="generatePDFReport()">PDF رپورٹ</button>
-<button class="btn btn-warning" onclick="printReport()">پرنٹ کریں</button>
-</div>
-<div id="reports-container"></div>
-<div class="pagination" id="report-pagination"></div>
-</div>
-<div class="tab-content" id="analytics">
-<div class="stats-grid">
-<div class="stat-card">
-<h3 id="analytics-peak-day">--</h3>
-<p>سب سے زیادہ آنے والا دن</p>
-</div>
-<div class="stat-card">
-<h3 id="analytics-avg-group-size">--</h3>
-<p>اوسط گروپ سائز</p>
-</div>
-<div class="stat-card">
-<h3 id="analytics-return-visitors">--</h3>
-<p>دوبارہ آنے والے</p>
-</div>
-<div class="stat-card">
-<h3 id="analytics-popular-purpose">--</h3>
-<p>مشہور ترین مقصد</p>
-</div>
-</div>
-<div class="filters" style="padding: 20px; background-color: var(--bg-color); border-radius: 12px; margin-bottom: 25px;">
-<div class="filter-grid">
-<div class="form-group">
-<label>تاریخ سے</label>
-<input id="analytics-date-from" onchange="loadAnalytics()" type="date"/>
-</div>
-<div class="form-group">
-<label>تاریخ تک</label>
-<input id="analytics-date-to" onchange="loadAnalytics()" type="date"/>
-</div>
-<div class="form-group">
-<label>زائر کی قسم</label>
-<select id="analytics-type-filter" onchange="loadAnalytics()">
-<option value="all">تمام</option>
-<option value="فرد">فرد</option>
-<option value="گروپ">گروپ</option>
-</select>
-</div>
-<div class="form-group" style="align-items: flex-end;">
-<button class="btn btn-warning" onclick="resetAnalyticsFilters()">فلٹرز صاف کریں</button>
-</div>
-</div>
-</div>
-<div class="reports-section">
-<h3>تفصیلی تجزیات</h3>
-<div id="analytics-charts">
-<div class="charts-grid">
-<div class="chart-card">
-<h3>آمدورفت کا رجحان (وقت کے ساتھ)</h3>
-<canvas id="visitorsOverTimeChart"></canvas>
-</div>
-<div class="chart-card">
-<h3>صوبے کے لحاظ سے تقسیم</h3>
-<canvas id="provinceDistributionChart"></canvas>
-</div>
-<div class="chart-card">
-<h3>مقصد کے لحاظ سے تقسیم</h3>
-<canvas id="purposeDistributionChart"></canvas>
-</div>
-<div class="chart-card">
-<h3>زائرین کی قسم (فرد/گروپ)</h3>
-<canvas id="visitorTypeChart"></canvas>
-</div>
-</div>
-</div>
-<div class="reports-section" id="analytics-tables">
-<h3>تفصیلی تجزیات (جدول)</h3>
-</div>
-</div>
-<div class="pagination" id="analytics-pagination"></div>
-</div>
-<div class="tab-content" id="settings">
-<div class="reports-section">
-<h3>بیک اپ اور بحالی</h3>
-<div class="export-buttons">
-<button class="btn btn-success" onclick="backupData()">مکمل ڈیٹا بیک اپ</button>
-<button class="btn btn-warning" onclick="document.getElementById('restore-file').click()">ڈیٹا بحال
+    <div class="container">
+        <header class="header">
+            <button class="dark-toggle" onclick="toggleDarkMode()">🌙 ڈارک موڈ</button>
+            <h1>دارالایمان کربوغہ شریف</h1>
+            <p>زائرین کا انتظام</p>
+        </header>
+        <nav class="nav-tabs">
+            <button class="nav-tab active" data-tab="dashboard">ڈیش بورڈ</button>
+            <button class="nav-tab" data-tab="visitors">زائرین کی فہرست</button>
+            <button class="nav-tab" data-tab="add-visitor">نیا زائر</button>
+            <button class="nav-tab" data-tab="reports">رپورٹس</button>
+            <button class="nav-tab" data-tab="analytics">تجزیات</button>
+            <button class="nav-tab" data-tab="settings">سیٹنگز</button>
+        </nav>
+        <div class="tab-content active" id="dashboard">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3 id="total-visitors">0</h3>
+                    <p>کل زائرین</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="total-attendees">0</h3>
+                    <p>کل حاضری</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="today-visitors">0</h3>
+                    <p>آج کے زائرین</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="present-visitors">0</h3>
+                    <p>موجودہ زائرین</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="present-attendees">0</h3>
+                    <p>موجودہ حاضری</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="total-groups">0</h3>
+                    <p>کل گروپس</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="average-stay">0</h3>
+                    <p>اوسط قیام (دن)</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="monthly-growth">0%</h3>
+                    <p>ماہانہ اضافہ</p>
+                </div>
+            </div>
+            <div class="reports-section">
+                <h3>حالیہ زائرین</h3>
+                <div id="recent-visitors"></div>
+                <button class="btn" onclick="showTab('visitors')">تمام زائرین دیکھیں</button>
+            </div>
+        </div>
+        <div class="tab-content" id="visitors">
+            <div class="search-box">
+                <input class="search-input" id="global-search" oninput="globalSearch()"
+                    placeholder="نام، فون، پتہ، یا مقصد سے تلاش کریں..." type="text" />
+                <button class="filter-toggle" onclick="toggleAdvancedFilters()">تفصیلی فلٹرز</button>
+            </div>
+            <div class="filters advanced-filters" id="advanced-filters">
+                <div class="filter-grid">
+                    <div class="form-group">
+                        <label>تاریخ سے</label>
+                        <input id="filter-date-from" onchange="filterVisitors()" type="date" />
+                    </div>
+                    <div class="form-group">
+                        <label>تاریخ تک</label>
+                        <input id="filter-date-to" onchange="filterVisitors()" type="date" />
+                    </div>
+                    <div class="form-group">
+                        <label>قسم</label>
+                        <select id="filter-type" onchange="filterVisitors()">
+                            <option value="">تمام</option>
+                            <option value="فرد">فرد</option>
+                            <option value="گروپ">گروپ</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>موجودگی</label>
+                        <select id="filter-status" onchange="filterVisitors()">
+                            <option value="">تمام</option>
+                            <option value="present">موجود</option>
+                            <option value="absent">غیر موجود</option>
+                            <option value="overstay">حد سے زیادہ قیام</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>شہر</label>
+                        <select id="filter-city" onchange="filterVisitors()">
+                            <option value="">تمام شہر</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>مقصد</label>
+                        <select id="filter-purpose" onchange="filterVisitors()">
+                            <option value="">تمام مقاصد</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="margin-top: 15px;">
+                    <button class="btn btn-warning" onclick="clearAllFilters()">فلٹرز صاف کریں</button>
+                    <button class="btn btn-info" onclick="exportFiltered()">فلٹرڈ ڈیٹا ایکسپورٹ</button>
+                </div>
+            </div>
+            <div class="bulk-actions" id="bulk-actions">
+                <button class="btn btn-danger" onclick="bulkDelete()">منتخب کردہ حذف کریں</button>
+                <button class="btn btn-info" onclick="bulkExport()">منتخب کردہ ایکسپورٹ</button>
+                <button class="btn btn-warning" onclick="clearSelection()">انتخاب صاف کریں</button>
+            </div>
+            <div id="visitors-list"></div>
+            <div class="pagination" id="pagination"></div>
+        </div>
+        <div class="tab-content" id="add-visitor">
+            <h3>نیا زائر شامل کریں</h3>
+            <form id="visitor-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>نام *</label>
+                        <input id="visitor-name" required="" type="text" />
+                    </div>
+                    <div class="form-group">
+                        <label>فون نمبر</label>
+                        <input id="visitor-phone" type="tel" />
+                    </div>
+                    <div class="form-group autocomplete-container">
+                        <label>پتہ</label>
+                        <textarea id="visitor-address" oninput="handleAddressAutocomplete(this.value)"
+                            rows="3"></textarea>
+                        <div class="autocomplete-suggestions" id="address-suggestions"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>تاریخ آمد *</label>
+                        <input id="arrival-date" onchange="updateDepartureDate()" required="" type="date" />
+                    </div>
+                    <div class="form-group">
+                        <label>آمد کا وقت</label>
+                        <input id="arrival-time" type="time" />
+                    </div>
+                    <div class="form-group">
+                        <label>تاریخ روانگی</label>
+                        <input id="departure-date" onchange="updateStayDuration()" type="date" />
+                    </div>
+                    <div class="form-group">
+                        <label>قیام کے دن</label>
+                        <input id="stay-duration" min="0" oninput="updateDepartureDate()" placeholder="مثلاً 5"
+                            type="number" />
+                    </div>
+                    <div class="form-group">
+                        <label>قسم *</label>
+                        <select id="visitor-type" onchange="toggleGroupCount()" required="">
+                            <option value="">منتخب کریں</option>
+                            <option value="فرد">فرد</option>
+                            <option value="گروپ">گروپ</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="group-count-section" style="display: none;">
+                        <label>افراد کی تعداد *</label>
+                        <input id="group-count" max="1000" min="1" type="number" />
+                    </div>
+                    <div class="form-group">
+                        <label>مقصد</label>
+                        <select id="visit-purpose-select" onchange="handlePurposeSelect()">
+                            <option value="">منتخب کریں یا نیا لکھیں</option>
+                            <option value="مذہبی تعلیم">مذہبی تعلیم</option>
+                            <option value="زیارت">زیارت</option>
+                            <option value="دعا اور تلاوت">دعا اور تلاوت</option>
+                            <option value="مذہبی اجتماع">مذہبی اجتماع</option>
+                            <option value="عرس شریف">عرس شریف</option>
+                            <option value="custom">نیا مقصد</option>
+                        </select>
+                        <textarea id="visit-purpose" placeholder="اپنا مقصد لکھیں" rows="2"
+                            style="margin-top: 10px; display: none;"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>گروپ ٹیگ</label>
+                        <input id="group-tag" placeholder="اختیاری - گروپ کا نام یا ٹیگ" type="text" />
+                    </div>
+                    <div class="form-group">
+                        <label>ذمہ دار شخص</label>
+                        <input id="responsible-person" placeholder="گروپ کے ذمہ دار کا نام" type="text" />
+                    </div>
+                    <div class="form-group">
+                        <label>خصوصی نوٹس</label>
+                        <textarea id="special-notes" placeholder="کوئی خصوصی ہدایات یا نوٹس" rows="2"></textarea>
+                    </div>
+                </div>
+                <button class="btn" type="submit">زائر شامل کریں</button>
+                <button class="btn btn-warning" onclick="resetForm()" type="button">صاف کریں</button>
+                <button class="btn btn-info" onclick="quickAddGroup()" type="button">فوری گروپ اندراج</button>
+            </form>
+        </div>
+        <div class="tab-content" id="reports">
+            <div class="reports-section">
+                <h3>رپورٹ فلٹرز</h3>
+                <div class="report-filters">
+                    <div class="form-group">
+                        <label>تاریخ سے</label>
+                        <input id="report-date-from" onchange="generateReports()" type="date" />
+                    </div>
+                    <div class="form-group">
+                        <label>تاریخ تک</label>
+                        <input id="report-date-to" onchange="generateReports()" type="date" />
+                    </div>
+                    <div class="form-group">
+                        <label>رپورٹ کی قسم</label>
+                        <select id="report-type" onchange="generateReports()">
+                            <option value="all">تمام ڈیٹا</option>
+                            <option value="daily-arrivals">یومیہ آمد</option>
+                            <option value="daily-departures">یومیہ روانگی</option>
+                            <option value="currently-present">موجودہ حاضری</option>
+                            <option value="upcoming-activity">آئندہ 7 دن</option>
+                            <option value="special-needs">خصوصی ضروریات</option>
+                            <option value="overstay">حد سے زیادہ قیام</option>
+                            <option value="period-summary">مدت کا خلاصہ</option>
+                            <option value="purpose-breakdown">مقصد کے لحاظ سے تقسیم</option>
+                            <option value="geographic-breakdown">جغرافیائی تقسیم</option>
+                            <option value="custom">حسب ضرورت</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>گروپ بذریعہ</label>
+                        <select id="group-by" onchange="generateReports()">
+                            <option value="none">کوئی گروپنگ نہیں</option>
+                            <option value="city">شہر کے حساب سے</option>
+                            <option value="purpose">مقصد کے حساب سے</option>
+                            <option value="type">قسم کے حساب سے</option>
+                            <option value="month">ماہ کے حساب سے</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="export-buttons">
+                    <button class="btn btn-warning" onclick="clearReportFilters()">فلٹرز صاف کریں</button>
+                    <button class="btn btn-success" onclick="exportToExcel('current_report')">رپورٹ Excel</button>
+                    <button class="btn btn-info" onclick="generatePDFReport()">PDF رپورٹ</button>
+                    <button class="btn btn-warning" onclick="printReport()">پرنٹ کریں</button>
+                </div>
+            </div>
+            <div id="reports-container"></div>
+            <div class="pagination" id="report-pagination"></div>
+        </div>
+        <div class="tab-content" id="analytics">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3 id="analytics-peak-day">--</h3>
+                    <p>سب سے زیادہ آنے والا دن</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="analytics-avg-group-size">--</h3>
+                    <p>اوسط گروپ سائز</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="analytics-return-visitors">--</h3>
+                    <p>دوبارہ آنے والے</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="analytics-popular-purpose">--</h3>
+                    <p>مشہور ترین مقصد</p>
+                </div>
+            </div>
+            <div class="filters"
+                style="padding: 20px; background-color: var(--bg-color); border-radius: 12px; margin-bottom: 25px;">
+                <div class="filter-grid">
+                    <div class="form-group">
+                        <label>تاریخ سے</label>
+                        <input id="analytics-date-from" onchange="loadAnalytics()" type="date" />
+                    </div>
+                    <div class="form-group">
+                        <label>تاریخ تک</label>
+                        <input id="analytics-date-to" onchange="loadAnalytics()" type="date" />
+                    </div>
+                    <div class="form-group">
+                        <label>زائر کی قسم</label>
+                        <select id="analytics-type-filter" onchange="loadAnalytics()">
+                            <option value="all">تمام</option>
+                            <option value="فرد">فرد</option>
+                            <option value="گروپ">گروپ</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>پہلی مدت سے (موازنہ)</label>
+                        <input id="compare-from1" onchange="loadAnalytics()" type="date" />
+                    </div>
+                    <div class="form-group">
+                        <label>پہلی مدت تک (موازنہ)</label>
+                        <input id="compare-to1" onchange="loadAnalytics()" type="date" />
+                    </div>
+                    <div class="form-group">
+                        <label>دوسری مدت سے (موازنہ)</label>
+                        <input id="compare-from2" onchange="loadAnalytics()" type="date" />
+                    </div>
+                    <div class="form-group">
+                        <label>دوسری مدت تک (موازنہ)</label>
+                        <input id="compare-to2" onchange="loadAnalytics()" type="date" />
+                    </div>
+                    <div class="form-group">
+                        <label>گروپ ٹیگز (موازنہ)</label>
+                        <select id="group-tag-compare" multiple="" onchange="loadAnalytics()">
+                        </select>
+                    </div>
+                    <div class="form-group" style="align-items: flex-end;">
+                        <button class="btn btn-warning" onclick="resetAnalyticsFilters()">فلٹرز صاف کریں</button>
+                    </div>
+                </div>
+            </div>
+            <div class="reports-section">
+                <h3>تجزیات کے چارٹس</h3>
+                <div id="analytics-charts">
+                    <div class="charts-grid">
+                        <div class="chart-card">
+                            <h3>آمدورفت کا رجحان (وقت کے ساتھ)</h3>
+                            <canvas id="visitorsOverTimeChart"></canvas>
+                        </div>
+                        <div class="chart-card">
+                            <h3>صوبے کے لحاظ سے تقسیم</h3>
+                            <canvas id="provinceDistributionChart"></canvas>
+                        </div>
+                        <div class="chart-card">
+                            <h3>مقصد کے لحاظ سے تقسیم</h3>
+                            <canvas id="purposeDistributionChart"></canvas>
+                        </div>
+                        <div class="chart-card">
+                            <h3>زائرین کی قسم (فرد/گروپ)</h3>
+                            <canvas id="visitorTypeChart"></canvas>
+                        </div>
+                        <div class="chart-card">
+                            <h3>قیام کی مدت کی تقسیم</h3>
+                            <canvas id="stayDurationChart"></canvas>
+                        </div>
+                        <div class="chart-card">
+                            <h3>ماہانہ آمد کا رجحان</h3>
+                            <canvas id="monthlyArrivalsChart"></canvas>
+                        </div>
+                        <div class="chart-card">
+                            <h3>مختلف مقاصد کا رجحان</h3>
+                            <canvas id="purposeTrendChart"></canvas>
+                        </div>
+                        <div class="chart-card">
+                            <h3>یومیہ آمد کا رجحان</h3>
+                            <canvas id="dailyArrivalsChart"></canvas>
+                        </div>
+                        <div class="chart-card">
+                            <h3>گھنٹہ وار آمد کا رجحان</h3>
+                            <canvas id="hourlyArrivalsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="reports-section" id="analytics-tables">
+                    <h3>تفصیلی تجزیات (جدول)</h3>
+                </div>
+            </div>
+            <div class="reports-section" id="comparative-analysis-section">
+                <h3>موازنہ کا تجزیہ</h3>
+                <div id="comparative-analysis-content"></div>
+            </div>
+            <div class="pagination" id="analytics-pagination"></div>
+        </div>
+        <div class="tab-content" id="settings">
+            <div class="reports-section">
+                <h3>بیک اپ اور بحالی</h3>
+                <div class="export-buttons">
+                    <button class="btn btn-success" onclick="backupData()">مکمل ڈیٹا بیک اپ</button>
+                    <button class="btn btn-warning" onclick="document.getElementById('restore-file').click()">ڈیٹا بحال
                         کریں</button>
-<input accept=".json" id="restore-file" onchange="restoreData(event)" style="display: none;" type="file"/>
-</div>
-</div>
-<div class="reports-section">
-<h3>ڈیٹا صفائی</h3>
-<div class="export-buttons">
-<button class="btn btn-warning" onclick="cleanOldData()">پرانا ڈیٹا صاف کریں</button>
-<button class="btn btn-danger" onclick="clearAllData()">تمام ڈیٹا حذف کریں</button>
-</div>
-</div>
-<div class="reports-section">
-<h3>سیٹنگز</h3>
-<div class="form-grid">
-<div class="form-group">
-<label>خودکار بیک اپ</label>
-<select id="auto-backup">
-<option value="never">کبھی نہیں</option>
-<option value="daily">روزانہ</option>
-<option value="weekly">ہفتہ وار</option>
-<option value="monthly">ماہانہ</option>
-</select>
-</div>
-<div class="form-group">
-<label>صفحہ میں ریکارڈز (فہرست)</label>
-<select id="records-per-page" onchange="updateRecordsPerPage()">
-<option value="10">10</option>
-<option selected="" value="25">25</option>
-<option value="50">50</option>
-<option value="100">100</option>
-</select>
-</div>
-<div class="form-group">
-<label>رپورٹس میں ریکارڈز فی صفحہ</label>
-<select id="reports-records-per-page" onchange="updateReportsRecordsPerPage()">
-<option value="10">10</option>
-<option selected="" value="25">25</option>
-<option value="50">50</option>
-<option value="100">100</option>
-</select>
-</div>
-<div class="form-group">
-<label>تجزیات میں ریکارڈز فی صفحہ</label>
-<select id="analytics-records-per-page" onchange="updateAnalyticsRecordsPerPage()">
-<option value="10">10</option>
-<option selected="" value="25">25</option>
-<option value="50">50</option>
-<option value="100">100</option>
-</select>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="modal" id="edit-modal" style="display: none;">
-<div class="modal-content">
-<div class="modal-header">
-<h3>زائر میں تبدیلی</h3>
-<button class="close-modal" onclick="closeEditModal()">×</button>
-</div>
-<form id="edit-visitor-form">
-<div class="form-grid">
-<div class="form-group">
-<label>نام *</label>
-<input id="edit-visitor-name" required="" type="text"/>
-</div>
-<div class="form-group">
-<label>فون نمبر</label>
-<input id="edit-visitor-phone" type="tel"/>
-</div>
-<div class="form-group autocomplete-container">
-<label>پتہ</label>
-<textarea id="edit-visitor-address" oninput="handleAddressAutocomplete(this.value, 'edit')" rows="3"></textarea>
-<div class="autocomplete-suggestions" id="edit-address-suggestions"></div>
-</div>
-<div class="form-group">
-<label>تاریخ آمد *</label>
-<input id="edit-arrival-date" onchange="updateDepartureDate('edit')" required="" type="date"/>
-</div>
-<div class="form-group">
-<label>تاریخ روانگی</label>
-<input id="edit-departure-date" onchange="updateStayDuration('edit')" type="date"/>
-</div>
-<div class="form-group">
-<label>قیام کے دن</label>
-<input id="edit-stay-duration" min="0" oninput="updateDepartureDate('edit')" placeholder="مثلاً 5" type="number"/>
-</div>
-<div class="form-group">
-<label>قسم *</label>
-<select id="edit-visitor-type" onchange="toggleEditGroupCount()" required="">
-<option value="فرد">فرد</option>
-<option value="گروپ">گروپ</option>
-</select>
-</div>
-<div class="form-group" id="edit-group-count-section">
-<label>افراد کی تعداد</label>
-<input id="edit-group-count" min="1" type="number"/>
-</div>
-<div class="form-group">
-<label>مقصد</label>
-<textarea id="edit-visit-purpose" rows="2"></textarea>
-</div>
-<div class="form-group">
-<label>گروپ ٹیگ</label>
-<input id="edit-group-tag" type="text"/>
-</div>
-<div class="form-group">
-<label>ذمہ دار شخص</label>
-<input id="edit-responsible-person" type="text"/>
-</div>
-<div class="form-group">
-<label>خصوصی نوٹس</label>
-<textarea id="edit-special-notes" rows="2"></textarea>
-</div>
-</div>
-<button class="btn" type="submit">تبدیلی محفوظ کریں</button>
-<button class="btn btn-warning" onclick="closeEditModal()" type="button">منسوخ</button>
-</form>
-</div>
-</div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script>
+                    <input accept=".json" id="restore-file" onchange="restoreData(event)" style="display: none;"
+                        type="file" />
+                </div>
+            </div>
+            <div class="reports-section">
+                <h3>ڈیٹا صفائی</h3>
+                <div class="export-buttons">
+                    <button class="btn btn-warning" onclick="cleanOldData()">پرانا ڈیٹا صاف کریں</button>
+                    <button class="btn btn-danger" onclick="clearAllData()">تمام ڈیٹا حذف کریں</button>
+                </div>
+            </div>
+            <div class="reports-section">
+                <h3>ڈیٹا کوالٹی</h3>
+                <div class="export-buttons">
+                    <button class="btn btn-info" onclick="showIncompleteRecords()">نامکمل ریکارڈز</button>
+                    <button class="btn btn-info" onclick="showPotentialDuplicates()">ممکنہ نقلیں</button>
+                </div>
+                <div id="data-quality-results" style="margin-top: 20px;"></div>
+            </div>
+            <div class="reports-section">
+                <h3>سیٹنگز</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>خودکار بیک اپ</label>
+                        <select id="auto-backup">
+                            <option value="never">کبھی نہیں</option>
+                            <option value="daily">روزانہ</option>
+                            <option value="weekly">ہفتہ وار</option>
+                            <option value="monthly">ماہانہ</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>صفحہ میں ریکارڈز (فہرست)</label>
+                        <select id="records-per-page" onchange="updateRecordsPerPage()">
+                            <option value="10">10</option>
+                            <option selected="" value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>رپورٹس میں ریکارڈز فی صفحہ</label>
+                        <select id="reports-records-per-page" onchange="updateReportsRecordsPerPage()">
+                            <option value="10">10</option>
+                            <option selected="" value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>تجزیات میں ریکارڈز فی صفحہ</label>
+                        <select id="analytics-records-per-page" onchange="updateAnalyticsRecordsPerPage()">
+                            <option value="10">10</option>
+                            <option selected="" value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="edit-modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>زائر میں تبدیلی</h3>
+                <button class="close-modal" onclick="closeEditModal()">×</button>
+            </div>
+            <form id="edit-visitor-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>نام *</label>
+                        <input id="edit-visitor-name" required="" type="text" />
+                    </div>
+                    <div class="form-group">
+                        <label>فون نمبر</label>
+                        <input id="edit-visitor-phone" type="tel" />
+                    </div>
+                    <div class="form-group autocomplete-container">
+                        <label>پتہ</label>
+                        <textarea id="edit-visitor-address" oninput="handleAddressAutocomplete(this.value, 'edit')"
+                            rows="3"></textarea>
+                        <div class="autocomplete-suggestions" id="edit-address-suggestions"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>تاریخ آمد *</label>
+                        <input id="edit-arrival-date" onchange="updateDepartureDate('edit')" required="" type="date" />
+                    </div>
+                    <div class="form-group">
+                        <label>آمد کا وقت</label>
+                        <input id="edit-arrival-time" type="time" />
+                    </div>
+                    <div class="form-group">
+                        <label>تاریخ روانگی</label>
+                        <input id="edit-departure-date" onchange="updateStayDuration('edit')" type="date" />
+                    </div>
+                    <div class="form-group">
+                        <label>قیام کے دن</label>
+                        <input id="edit-stay-duration" min="0" oninput="updateDepartureDate('edit')"
+                            placeholder="مثلاً 5" type="number" />
+                    </div>
+                    <div class="form-group">
+                        <label>قسم *</label>
+                        <select id="edit-visitor-type" onchange="toggleEditGroupCount()" required="">
+                            <option value="فرد">فرد</option>
+                            <option value="گروپ">گروپ</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="edit-group-count-section">
+                        <label>افراد کی تعداد</label>
+                        <input id="edit-group-count" min="1" type="number" />
+                    </div>
+                    <div class="form-group">
+                        <label>مقصد</label>
+                        <textarea id="edit-visit-purpose" rows="2"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>گروپ ٹیگ</label>
+                        <input id="edit-group-tag" type="text" />
+                    </div>
+                    <div class="form-group">
+                        <label>ذمہ دار شخص</label>
+                        <input id="edit-responsible-person" type="text" />
+                    </div>
+                    <div class="form-group">
+                        <label>خصوصی نوٹس</label>
+                        <textarea id="edit-special-notes" rows="2"></textarea>
+                    </div>
+                </div>
+                <button class="btn" type="submit">تبدیلی محفوظ کریں</button>
+                <button class="btn btn-warning" onclick="closeEditModal()" type="button">منسوخ</button>
+            </form>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
         let db;
         let analyticsCharts = {};
         let currentEditId = null;
@@ -1113,6 +1195,7 @@
                 phone: "0300-1234567",
                 address: "گلبرگ، لاہور، پنجاب",
                 arrivalDate: "2025-08-01",
+                arrivalTime: "10:30",
                 departureDate: "2025-08-05",
                 type: "گروپ",
                 groupCount: 15,
@@ -1128,6 +1211,7 @@
                 phone: "0321-9876543",
                 address: "کلفٹن، کراچی، سندھ",
                 arrivalDate: "2025-08-02",
+                arrivalTime: "14:00",
                 departureDate: "2025-08-06",
                 type: "گروپ",
                 groupCount: 25,
@@ -1143,6 +1227,7 @@
                 phone: "0333-5555555",
                 address: "ایف سکس، اسلام آباد",
                 arrivalDate: "2025-08-01",
+                arrivalTime: "09:00",
                 departureDate: "2025-08-03",
                 type: "فرد",
                 groupCount: 1,
@@ -1158,6 +1243,7 @@
                 phone: "0345-7777777",
                 address: "ساماں آباد، فیصل آباد، پنجاب",
                 arrivalDate: "2025-07-30",
+                arrivalTime: "11:00",
                 departureDate: "2025-08-04",
                 type: "گروپ",
                 groupCount: 12,
@@ -1168,8 +1254,41 @@
                 addedDate: new Date("2025-07-28T14:00:00Z").toISOString()
             }
         ];
+        function populatePurposeSelects() {
+            if (!db) return;
+            const transaction = db.transaction(['purposes'], 'readonly');
+            const objectStore = transaction.objectStore('purposes');
+            const request = objectStore.getAll();
+            request.onsuccess = function () {
+                const dbPurposes = request.result.map(p => p.purpose);
+                const purposeSelect = document.getElementById('visit-purpose-select');
+                const filterSelect = document.getElementById('filter-purpose');
+                const defaultPurposes = ["مذہبی تعلیم", "زیارت", "دعا اور تلاوت", "مذہبی اجتماع", "عرس شریف"];
+                const allPurposes = [...new Set([...defaultPurposes, ...dbPurposes])].sort();
+                const customOption = purposeSelect.querySelector('option[value="custom"]');
+                const firstOption = purposeSelect.options[0];
+                purposeSelect.innerHTML = '';
+                purposeSelect.appendChild(firstOption);
+                allPurposes.forEach(p => {
+                    const option = document.createElement('option');
+                    option.value = p;
+                    option.textContent = p;
+                    purposeSelect.appendChild(option);
+                });
+                purposeSelect.appendChild(customOption);
+                const firstFilterOption = filterSelect.options[0];
+                filterSelect.innerHTML = '';
+                filterSelect.appendChild(firstFilterOption);
+                allPurposes.forEach(p => {
+                    const option = document.createElement('option');
+                    option.value = p;
+                    option.textContent = p;
+                    filterSelect.appendChild(option);
+                });
+            };
+        }
         function initDB() {
-            const request = indexedDB.open('VisitorsDB', 2);
+            const request = indexedDB.open('VisitorsDB', 3);
             request.onerror = function () {
                 console.error('Database failed to open');
             };
@@ -1180,6 +1299,7 @@
                 loadVisitorsList();
                 populateFilterOptions();
                 scheduleAutoBackup();
+                populateGroupTagCompareSelect();
             };
             request.onupgradeneeded = function (e) {
                 db = e.target.result;
@@ -1190,17 +1310,32 @@
                     objectStore.createIndex('type', 'type', { unique: false });
                     objectStore.createIndex('address', 'address', { unique: false });
                     objectStore.createIndex('purpose', 'purpose', { unique: false });
+                    objectStore.createIndex('departureDate', 'departureDate', { unique: false });
+                }
+                if (!db.objectStoreNames.contains('purposes')) {
+                    const purposeStore = db.createObjectStore('purposes', { keyPath: 'id', autoIncrement: true });
+                    purposeStore.createIndex('purpose', 'purpose', { unique: true });
                 }
                 if (!db.objectStoreNames.contains('addresses')) {
                     const addressStore = db.createObjectStore('addresses', { keyPath: 'id', autoIncrement: true });
                     addressStore.createIndex('address', 'address', { unique: true });
                 }
+                if (e.oldVersion < 3) {
+                    const visitorStore = e.target.transaction.objectStore('visitors');
+                    if (!visitorStore.indexNames.contains('groupTag')) {
+                        visitorStore.createIndex('groupTag', 'groupTag', { unique: false });
+                    }
+                    if (!visitorStore.indexNames.contains('arrivalTime')) {
+                        visitorStore.createIndex('arrivalTime', 'arrivalTime', { unique: false });
+                    }
+                }
             };
         }
         function loadSampleData() {
-            const transaction = db.transaction(['visitors', 'addresses'], 'readwrite');
+            const transaction = db.transaction(['visitors', 'addresses', 'purposes'], 'readwrite');
             const visitorStore = transaction.objectStore('visitors');
             const addressStore = transaction.objectStore('addresses');
+            const purposeStore = transaction.objectStore('purposes');
             const countRequest = visitorStore.count();
             countRequest.onsuccess = function () {
                 if (countRequest.result === 0) {
@@ -1211,6 +1346,13 @@
                                 addressStore.add({ address: visitor.address.trim(), count: 1 });
                             }
                         };
+                        if (visitor.purpose) {
+                            purposeStore.index('purpose').get(visitor.purpose.trim()).onsuccess = function (event) {
+                                if (!event.target.result) {
+                                    purposeStore.add({ purpose: visitor.purpose.trim() });
+                                }
+                            };
+                        }
                     });
                 }
             };
@@ -1318,6 +1460,7 @@
             document.getElementById('arrival-date').value = new Date().toISOString().split('T')[0];
             document.getElementById('departure-date').value = '';
             document.getElementById('stay-duration').value = '';
+            document.getElementById('arrival-time').value = new Date().toTimeString().split(' ')[0].substring(0, 5);
         }
         function quickAddGroup() {
             document.getElementById('visitor-type').value = 'گروپ';
@@ -1335,6 +1478,7 @@
                 phone: document.getElementById('visitor-phone').value,
                 address: document.getElementById('visitor-address').value,
                 arrivalDate: document.getElementById('arrival-date').value,
+                arrivalTime: document.getElementById('arrival-time').value,
                 departureDate: document.getElementById('departure-date').value,
                 type: document.getElementById('visitor-type').value,
                 groupCount: document.getElementById('visitor-type').value === 'گروپ' ?
@@ -1345,15 +1489,26 @@
                 specialNotes: document.getElementById('special-notes').value,
                 addedDate: new Date().toISOString()
             };
-            const transaction = db.transaction(['visitors'], 'readwrite');
+            const transaction = db.transaction(['visitors', 'purposes'], 'readwrite');
             const objectStore = transaction.objectStore('visitors');
+            const purposeStore = transaction.objectStore('purposes');
             const request = objectStore.add(visitor);
             request.onsuccess = function () {
+                if (finalPurpose.trim() !== '') {
+                    const checkReq = purposeStore.index('purpose').get(finalPurpose.trim());
+                    checkReq.onsuccess = () => {
+                        if (!checkReq.result) {
+                            purposeStore.add({ purpose: finalPurpose.trim() });
+                        }
+                    };
+                }
                 saveAddressToAutocomplete(visitor.address);
                 resetForm();
                 loadDashboard();
                 loadVisitorsList();
                 populateFilterOptions();
+                populatePurposeSelects();
+                populateGroupTagCompareSelect();
                 alert('زائر کامیابی سے شامل ہو گیا!');
             };
             request.onerror = function (event) {
@@ -1369,6 +1524,7 @@
                 phone: document.getElementById('edit-visitor-phone').value,
                 address: document.getElementById('edit-visitor-address').value,
                 arrivalDate: document.getElementById('edit-arrival-date').value,
+                arrivalTime: document.getElementById('edit-arrival-time').value,
                 departureDate: document.getElementById('edit-departure-date').value,
                 type: document.getElementById('edit-visitor-type').value,
                 groupCount: document.getElementById('edit-visitor-type').value === 'گروپ' ?
@@ -1379,15 +1535,26 @@
                 specialNotes: document.getElementById('edit-special-notes').value,
                 addedDate: new Date().toISOString()
             };
-            const transaction = db.transaction(['visitors'], 'readwrite');
+            const transaction = db.transaction(['visitors', 'purposes'], 'readwrite');
             const objectStore = transaction.objectStore('visitors');
+            const purposeStore = transaction.objectStore('purposes');
             const request = objectStore.put(visitor);
             request.onsuccess = function () {
+                if (visitor.purpose.trim() !== '') {
+                    const checkReq = purposeStore.index('purpose').get(visitor.purpose.trim());
+                    checkReq.onsuccess = () => {
+                        if (!checkReq.result) {
+                            purposeStore.add({ purpose: visitor.purpose.trim() });
+                        }
+                    };
+                }
                 saveAddressToAutocomplete(visitor.address);
                 closeEditModal();
                 loadDashboard();
                 loadVisitorsList();
                 populateFilterOptions();
+                populatePurposeSelects();
+                populateGroupTagCompareSelect();
                 alert('تبدیلی محفوظ ہو گئی!');
             };
             request.onerror = function (event) {
@@ -1564,10 +1731,21 @@
             loadAnalytics();
         }
         function createVisitorCard(visitor, showActions = false) {
-            const isPresent = isVisitorPresent(visitor);
-            const statusClass = isPresent ? 'present' : '';
-            const statusText = isPresent ? 'موجود' : 'غیر موجود';
-            const statusBadgeClass = isPresent ? '' : 'absent';
+            const isPresentStatus = isVisitorPresent(visitor);
+            const isOverstay = isVisitorOverstay(visitor);
+            let statusClass = '';
+            let statusText = '';
+            if (isPresentStatus) {
+                statusClass = 'present';
+                statusText = 'موجود';
+            } else if (isOverstay) {
+                statusClass = 'overstay';
+                statusText = 'حد سے زیادہ قیام';
+            } else {
+                statusClass = 'absent';
+                statusText = 'غیر موجود';
+            }
+            const statusBadgeClass = isPresentStatus ? '' : 'absent';
             const groupTag = visitor.groupTag ? `<span class="group-tag">${visitor.groupTag}</span>` : '';
             return `
                 <div class="visitor-card ${statusClass}">
@@ -1579,7 +1757,7 @@
                     <div class="visitor-details">
                         <div class="visitor-detail"><strong>فون:</strong> ${visitor.phone || 'نہیں'}</div>
                         <div class="visitor-detail"><strong>پتہ:</strong> ${visitor.address || 'نہیں'}</div>
-                        <div class="visitor-detail"><strong>آمد:</strong> ${formatDate(visitor.arrivalDate)}</div>
+                        <div class="visitor-detail"><strong>آمد:</strong> ${formatDate(visitor.arrivalDate)} ${visitor.arrivalTime || ''}</div>
                         <div class="visitor-detail"><strong>روانگی:</strong> ${visitor.departureDate ? formatDate(visitor.departureDate) : 'طے نہیں'}</div>
                         <div class="visitor-detail"><strong>قسم:</strong> ${visitor.type}</div>
                         <div class="visitor-detail"><strong>افراد:</strong> ${visitor.groupCount || 1}</div>
@@ -1589,6 +1767,7 @@
                     </div>
                     ${showActions ? `
                         <div class="visitor-actions">
+                            ${isPresentStatus ? `<button class="btn btn-sm btn-danger" onclick="checkoutVisitor(${visitor.id})">روانگی درج کریں</button>` : ''}
                             <button class="btn btn-sm btn-warning" onclick="editVisitor(${visitor.id})">تبدیل کریں</button>
                             <button class="btn btn-sm btn-danger" onclick="deleteVisitor(${visitor.id})">حذف کریں</button>
                             <button class="btn btn-sm btn-info" onclick="duplicateVisitor(${visitor.id})">کاپی کریں</button>
@@ -1659,8 +1838,40 @@
                 return today >= arrival;
             }
         }
+        function isVisitorOverstay(visitor) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const departure = visitor.departureDate ? new Date(visitor.departureDate) : null;
+            return departure && today > departure && isVisitorPresent(visitor);
+        }
         function isPresent(visitor) {
             return isVisitorPresent(visitor);
+        }
+        function checkoutVisitor(id) {
+            if (confirm('کیا آپ اس زائر کی روانگی کی تاریخ آج کی تاریخ پر سیٹ کرنا چاہتے ہیں؟')) {
+                const transaction = db.transaction(['visitors'], 'readwrite');
+                const objectStore = transaction.objectStore('visitors');
+                const request = objectStore.get(id);
+                request.onsuccess = function () {
+                    const visitor = request.result;
+                    if (visitor) {
+                        visitor.departureDate = new Date().toISOString().split('T')[0];
+                        const putRequest = objectStore.put(visitor);
+                        putRequest.onsuccess = function () {
+                            loadDashboard();
+                            loadVisitorsList();
+                            alert('روانگی کی تاریخ کامیابی سے درج کی گئی!');
+                        };
+                        putRequest.onerror = function (event) {
+                            console.error('Error updating departure date:', event.target.error);
+                            alert('روانگی کی تاریخ درج کرنے میں خرابی پیش آئی: ' + event.target.error.message);
+                        };
+                    }
+                };
+                request.onerror = function (event) {
+                    console.error('Error fetching visitor for checkout:', event.target.error);
+                };
+            }
         }
         function formatDate(dateStr) {
             if (!dateStr) return '--';
@@ -1712,8 +1923,10 @@
                 if (purpose && visitor.purpose !== purpose) match = false;
                 if (status) {
                     const present = isVisitorPresent(visitor);
+                    const overstay = isVisitorOverstay(visitor);
                     if (status === 'present' && !present) match = false;
                     if (status === 'absent' && present) match = false;
+                    if (status === 'overstay' && !overstay) match = false;
                 }
                 return match;
             });
@@ -1741,13 +1954,14 @@
                 const cities = [...new Set(visitors.map(v => {
                     if (v.address) {
                         const parts = v.address.split('،').map(p => p.trim());
-                        return parts.length > 1 ? parts[parts.length - 1] : parts[0];
+                        return parts[1] || parts[0];
                     }
                     return '';
                 }).filter(Boolean))];
                 const purposes = [...new Set(visitors.map(v => v.purpose).filter(Boolean))];
                 populateSelect('filter-city', cities);
                 populateSelect('filter-purpose', purposes);
+                populatePurposeSelects();
             };
             request.onerror = function (event) {
                 console.error('Error populating filter options:', event.target.error);
@@ -1756,7 +1970,7 @@
         function populateSelect(selectId, options) {
             const select = document.getElementById(selectId);
             const currentValue = select.value;
-            select.innerHTML = select.querySelector('option').outerHTML;
+            select.innerHTML = select.querySelector('option') ? select.querySelector('option').outerHTML : '';
             options.sort().forEach(option => {
                 const optionElement = document.createElement('option');
                 optionElement.value = option;
@@ -1780,6 +1994,7 @@
                 document.getElementById('edit-visitor-phone').value = visitor.phone;
                 document.getElementById('edit-visitor-address').value = visitor.address;
                 document.getElementById('edit-arrival-date').value = visitor.arrivalDate;
+                document.getElementById('edit-arrival-time').value = visitor.arrivalTime;
                 document.getElementById('edit-departure-date').value = visitor.departureDate;
                 document.getElementById('edit-visitor-type').value = visitor.type;
                 document.getElementById('edit-group-count').value = visitor.groupCount;
@@ -1858,6 +2073,13 @@
             document.getElementById('edit-address-suggestions').style.display = 'none';
             currentEditId = null;
         }
+        function clearReportFilters() {
+            document.getElementById('report-date-from').value = '';
+            document.getElementById('report-date-to').value = '';
+            document.getElementById('report-type').value = 'all';
+            document.getElementById('group-by').value = 'none';
+            generateReports();
+        }
         function loadReports() {
             generateReports();
         }
@@ -1866,42 +2088,81 @@
             const objectStore = transaction.objectStore('visitors');
             const request = objectStore.getAll();
             request.onsuccess = function () {
-                let visitors = request.result;
+                let visitors = request.result.sort((a, b) => {
+                    const dateA = new Date(a.arrivalDate + 'T' + (a.arrivalTime || '00:00'));
+                    const dateB = new Date(b.arrivalDate + 'T' + (b.arrivalTime || '00:00'));
+                    return dateB - dateA;
+                });
                 const dateFrom = document.getElementById('report-date-from')?.value;
                 const dateTo = document.getElementById('report-date-to')?.value;
                 const reportType = document.getElementById('report-type')?.value || 'all';
                 const groupBy = document.getElementById('group-by')?.value || 'none';
-                if (dateFrom) {
-                    visitors = visitors.filter(v => v.arrivalDate >= dateFrom);
-                }
-                if (dateTo) {
-                    visitors = visitors.filter(v => v.arrivalDate <= dateTo);
-                }
-                const now = new Date();
-                now.setHours(0, 0, 0, 0);
-                if (reportType !== 'all' && reportType !== 'custom') {
-                    visitors = visitors.filter(v => {
-                        const date = new Date(v.arrivalDate);
-                        date.setHours(0, 0, 0, 0);
-                        switch (reportType) {
-                            case 'daily':
-                                return date.getTime() === now.getTime();
-                            case 'weekly':
-                                const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-                                oneWeekAgo.setHours(0, 0, 0, 0);
-                                return date >= oneWeekAgo;
-                            case 'monthly':
-                                return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
-                            case 'yearly':
-                                return date.getFullYear() === now.getFullYear();
-                            default:
-                                return true;
+                if (dateFrom) visitors = visitors.filter(v => v.arrivalDate >= dateFrom);
+                if (dateTo) visitors = visitors.filter(v => v.arrivalDate <= dateTo);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const nextSevenDays = new Date(today);
+                nextSevenDays.setDate(today.getDate() + 7);
+                nextSevenDays.setHours(23, 59, 59, 999);
+                let reportContent = '';
+                switch (reportType) {
+                    case 'daily-arrivals':
+                        reportedVisitors = visitors.filter(v => new Date(v.arrivalDate).setHours(0, 0, 0, 0) === today.getTime());
+                        reportContent = generateBasicReport(reportedVisitors);
+                        break;
+                    case 'daily-departures':
+                        reportedVisitors = visitors.filter(v => new Date(v.departureDate).setHours(0, 0, 0, 0) === today.getTime());
+                        reportContent = generateBasicReport(reportedVisitors);
+                        break;
+                    case 'currently-present':
+                        reportedVisitors = visitors.filter(v => isVisitorPresent(v));
+                        reportContent = generateBasicReport(reportedVisitors);
+                        break;
+                    case 'upcoming-activity':
+                        reportedVisitors = visitors.filter(v => {
+                            const arrivalDate = new Date(v.arrivalDate);
+                            arrivalDate.setHours(0, 0, 0, 0);
+                            const departureDate = v.departureDate ? new Date(v.departureDate) : null;
+                            if (departureDate) departureDate.setHours(0, 0, 0, 0);
+                            return (arrivalDate >= today && arrivalDate <= nextSevenDays) ||
+                                (departureDate && departureDate >= today && departureDate <= nextSevenDays);
+                        });
+                        reportContent = generateBasicReport(reportedVisitors);
+                        break;
+                    case 'special-needs':
+                        reportedVisitors = visitors.filter(v => v.specialNotes && isVisitorPresent(v));
+                        reportContent = generateBasicReport(reportedVisitors);
+                        break;
+                    case 'overstay':
+                        reportedVisitors = visitors.filter(v => isVisitorOverstay(v));
+                        reportContent = generateBasicReport(reportedVisitors);
+                        break;
+                    case 'period-summary':
+                        reportedVisitors = visitors;
+                        reportContent = generatePeriodSummary(reportedVisitors);
+                        break;
+                    case 'purpose-breakdown':
+                        reportedVisitors = visitors;
+                        reportContent = generatePurposeBreakdown(reportedVisitors);
+                        break;
+                    case 'geographic-breakdown':
+                        reportedVisitors = visitors;
+                        reportContent = generateGeographicBreakdown(reportedVisitors);
+                        break;
+                    case 'all':
+                    case 'custom':
+                    default:
+                        reportedVisitors = visitors;
+                        if (groupBy === 'none') {
+                            reportContent = generateBasicReport(reportedVisitors);
+                        } else {
+                            reportContent = generateGroupedReport(reportedVisitors, groupBy);
                         }
-                    });
+                        break;
                 }
-                reportedVisitors = visitors.sort((a, b) => new Date(b.arrivalDate) - new Date(a.arrivalDate));
-                reportsCurrentPage = 1;
-                displayReportsContent(reportedVisitors, groupBy);
+                const container = document.getElementById('reports-container');
+                container.innerHTML = reportContent;
+                updatePagination('reports');
             };
             request.onerror = function (event) {
                 console.error('Error generating reports:', event.target.error);
@@ -1945,12 +2206,13 @@
                             <th>افراد</th>
                             <th>مقصد</th>
                             <th>موجودگی</th>
+                            <th>نوٹس</th>
                         </tr>
                     </thead>
                     <tbody>
             `;
             if (visitors.length === 0) {
-                html += `<tr><td colspan="9" style="text-align: center;">کوئی ڈیٹا دستیاب نہیں</td></tr>`;
+                html += `<tr><td colspan="10" style="text-align: center;">کوئی ڈیٹا دستیاب نہیں</td></tr>`;
             } else {
                 visitors.forEach(visitor => {
                     html += `
@@ -1958,12 +2220,13 @@
                             <td>${visitor.name}</td>
                             <td>${visitor.phone || '--'}</td>
                             <td>${visitor.address || '--'}</td>
-                            <td>${formatDate(visitor.arrivalDate)}</td>
+                            <td>${formatDate(visitor.arrivalDate)} ${visitor.arrivalTime || ''}</td>
                             <td>${visitor.departureDate ? formatDate(visitor.departureDate) : '--'}</td>
                             <td>${visitor.type}</td>
                             <td>${visitor.groupCount || 1}</td>
                             <td>${visitor.purpose || '--'}</td>
-                            <td>${isVisitorPresent(visitor) ? 'موجود' : 'غیر موجود'}</td>
+                            <td>${isVisitorPresent(visitor) ? 'موجود' : (isVisitorOverstay(visitor) ? 'حد سے زیادہ قیام' : 'غیر موجود')}</td>
+                            <td>${visitor.specialNotes || '--'}</td>
                         </tr>
                     `;
                 });
@@ -2001,7 +2264,7 @@
             if (Object.keys(groups).length === 0) {
                 html += `<p style="text-align: center;">کوئی ڈیٹا دستیاب نہیں</p>`;
             } else {
-                Object.entries(groups).forEach(([groupName, groupVisitors]) => {
+                Object.entries(groups).sort().forEach(([groupName, groupVisitors]) => {
                     const totalAttendees = groupVisitors.reduce((sum, v) => sum + (v.groupCount || 1), 0);
                     html += `
                         <div class="reports-section">
@@ -2023,11 +2286,11 @@
                                         <tr>
                                             <td>${v.name}</td>
                                             <td>${v.phone || '--'}</td>
-                                            <td>${formatDate(v.arrivalDate)}</td>
+                                            <td>${formatDate(v.arrivalDate)} ${v.arrivalTime || ''}</td>
                                             <td>${v.departureDate ? formatDate(v.departureDate) : '--'}</td>
                                             <td>${v.groupCount || 1}</td>
                                             <td>${v.purpose || '--'}</td>
-                                            <td>${isVisitorPresent(v) ? 'موجود' : 'غیر موجود'}</td>
+                                            <td>${isVisitorPresent(v) ? 'موجود' : (isVisitorOverstay(v) ? 'حد سے زیادہ قیام' : 'غیر موجود')}</td>
                                         </tr>
                                     `).join('')}
                                 </tbody>
@@ -2039,22 +2302,166 @@
             html += '</div>';
             return html;
         }
-        function searchReports() {
-            const searchTerm = document.getElementById('report-search').value.toLowerCase();
-            const originalGroupBy = document.getElementById('group-by').value;
-            if (originalGroupBy !== 'none') {
-                document.getElementById('group-by').value = 'none';
-                generateReports();
-            }
-            const rows = document.querySelectorAll('#reports-container tbody tr');
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(searchTerm) ? '' : 'none';
-            });
+        function generatePeriodSummary(visitors) {
+            const totalVisitors = visitors.length;
+            const totalAttendees = visitors.reduce((sum, v) => sum + (v.groupCount || 1), 0);
+            const totalGroups = visitors.filter(v => v.type === 'گروپ').length;
+            const totalIndividuals = visitors.filter(v => v.type === 'فرد').length;
+            const stayDurations = visitors
+                .filter(v => v.departureDate && v.arrivalDate)
+                .map(v => {
+                    const arrival = new Date(v.arrivalDate);
+                    const departure = new Date(v.departureDate);
+                    const diffTime = Math.abs(departure.getTime() - arrival.getTime());
+                    return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                })
+                .filter(duration => !isNaN(duration) && duration > 0);
+            const averageStay = stayDurations.length > 0 ?
+                Math.round(stayDurations.reduce((a, b) => a + b, 0) / stayDurations.length) : 0;
+            const groupVisitors = visitors.filter(v => v.type === 'گروپ');
+            const totalGroupSize = groupVisitors.reduce((sum, v) => sum + (v.groupCount || 1), 0);
+            const averageGroupSize = groupVisitors.length > 0 ?
+                Math.round(totalGroupSize / groupVisitors.length) : 0;
+            return `
+                <div class="reports-section">
+                    <h3>مدت کا خلاصہ</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>اشاریہ</th>
+                                <th>تعداد</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>کل زائرین</td><td>${totalVisitors}</td></tr>
+                            <tr><td>کل حاضری (افراد)</td><td>${totalAttendees}</td></tr>
+                            <tr><td>کل گروپس</td><td>${totalGroups}</td></tr>
+                            <tr><td>کل انفرادی زائرین</td><td>${totalIndividuals}</td></tr>
+                            <tr><td>اوسط قیام (دن)</td><td>${averageStay}</td></tr>
+                            <tr><td>اوسط گروپ سائز</td><td>${averageGroupSize}</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
         }
-        function getProvince(city) {
-            if (!city) return 'نامعلوم';
-            const normalizedCity = city.toLowerCase();
+        function generatePurposeBreakdown(visitors) {
+            const purposeCount = {};
+            visitors.forEach(v => {
+                const purpose = v.purpose || 'نامعلوم';
+                purposeCount[purpose] = (purposeCount[purpose] || 0) + (v.groupCount || 1);
+            });
+            const totalAttendees = visitors.reduce((sum, v) => sum + (v.groupCount || 1), 0);
+            let html = `
+                <div class="reports-section">
+                    <h3>مقصد کے لحاظ سے تقسیم</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>مقصد</th>
+                                <th>کل افراد</th>
+                                <th>فیصد</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            if (Object.keys(purposeCount).length === 0) {
+                html += `<tr><td colspan="3" style="text-align: center;">کوئی ڈیٹا دستیاب نہیں</td></tr>`;
+            } else {
+                Object.entries(purposeCount)
+                    .sort((a, b) => b[1] - a[1])
+                    .forEach(([purpose, count]) => {
+                        const percentage = totalAttendees > 0 ? ((count / totalAttendees) * 100).toFixed(1) : '0';
+                        html += `
+                            <tr>
+                                <td>${purpose}</td>
+                                <td>${count}</td>
+                                <td>${percentage}%</td>
+                            </tr>
+                        `;
+                    });
+            }
+            html += '</tbody></table></div>';
+            return html;
+        }
+        function generateGeographicBreakdown(visitors) {
+            const cityCount = {};
+            const provinceCount = {};
+            visitors.forEach(v => {
+                const members = v.groupCount || 1;
+                const city = v.address?.split('،')[0]?.trim() || 'نامعلوم';
+                const province = getProvince(v.address?.split('،').pop()?.trim());
+                cityCount[city] = (cityCount[city] || 0) + members;
+                provinceCount[province] = (provinceCount[province] || 0) + members;
+            });
+            const totalAttendees = visitors.reduce((sum, v) => sum + (v.groupCount || 1), 0);
+            let html = `
+                <div class="reports-section">
+                    <h3>جغرافیائی تقسیم (صوبے کے لحاظ سے)</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>صوبہ</th>
+                                <th>کل افراد</th>
+                                <th>فیصد</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            if (Object.keys(provinceCount).length === 0) {
+                html += `<tr><td colspan="3" style="text-align: center;">کوئی ڈیٹا دستیاب نہیں</td></tr>`;
+            } else {
+                Object.entries(provinceCount)
+                    .sort((a, b) => b[1] - a[1])
+                    .forEach(([province, count]) => {
+                        const percentage = totalAttendees > 0 ? ((count / totalAttendees) * 100).toFixed(1) : '0';
+                        html += `
+                            <tr>
+                                <td>${province}</td>
+                                <td>${count}</td>
+                                <td>${percentage}%</td>
+                            </tr>
+                        `;
+                    });
+            }
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+                <div class="reports-section">
+                    <h3>جغرافیائی تقسیم (شہر کے لحاظ سے - ٹاپ 10)</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>شہر</th>
+                                <th>کل افراد</th>
+                                <th>فیصد</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            if (Object.keys(cityCount).length === 0) {
+                html += `<tr><td colspan="3" style="text-align: center;">کوئی ڈیٹا دستیاب نہیں</td></tr>`;
+            } else {
+                Object.entries(cityCount)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 10)
+                    .forEach(([city, count]) => {
+                        const percentage = totalAttendees > 0 ? ((count / totalAttendees) * 100).toFixed(1) : '0';
+                        html += `
+                            <tr>
+                                <td>${city}</td>
+                                <td>${count}</td>
+                                <td>${percentage}%</td>
+                            </tr>
+                        `;
+                    });
+            }
+            html += '</tbody></table></div>';
+            return html;
+        }
+        function getProvince(addressPart) {
+            if (!addressPart) return 'نامعلوم';
+            const normalized = addressPart.toLowerCase();
             const provinceMap = {
                 'پنجاب': ['lahore', 'لاہور', 'faisalabad', 'فیصل آباد', 'rawalpindi', 'راولپنڈی', 'multan', 'ملتان', 'gujranwala', 'گوجرانوالہ', 'sialkot', 'سیالکوٹ', 'bahawalpur', 'بہاولپور', 'sargodha', 'سرگودھا', 'gujrat', 'گجرات', 'jhelum', 'جہلم', 'chakwal', 'چکوال', 'mianwali', 'میانوالی'],
                 'سندھ': ['karachi', 'کراچی', 'hyderabad', 'حیدرآباد', 'sukkur', 'سکھر', 'larkana', 'لاڑکانہ', 'mirpur khas', 'میرپور خاص'],
@@ -2065,7 +2472,7 @@
                 'آزاد کشمیر': ['muzaffarabad', 'مظفرآباد', 'mirpur', 'میرپور']
             };
             for (const province in provinceMap) {
-                if (provinceMap[province].some(c => normalizedCity.includes(c))) {
+                if (provinceMap[province].some(c => normalized.includes(c))) {
                     return province;
                 }
             }
@@ -2075,6 +2482,11 @@
             document.getElementById('analytics-date-from').value = '';
             document.getElementById('analytics-date-to').value = '';
             document.getElementById('analytics-type-filter').value = 'all';
+            document.getElementById('compare-from1').value = '';
+            document.getElementById('compare-to1').value = '';
+            document.getElementById('compare-from2').value = '';
+            document.getElementById('compare-to2').value = '';
+            document.getElementById('group-tag-compare').value = '';
             loadAnalytics();
         }
         function destroyAllCharts() {
@@ -2085,95 +2497,193 @@
             });
             analyticsCharts = {};
         }
-
         function renderAllAnalyticsCharts(visitors) {
             const isDarkMode = document.body.classList.contains('dark');
             const fontColor = isDarkMode ? '#e0e0e0' : '#333';
             const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
             const chartColors = ['#5b8ad2', '#4CAF50', '#fdd835', '#ef5350', '#17a2b8', '#663399', '#ff9800'];
-
-            // 1. Visitors Over Time Data
-            const trendData = visitors.reduce((acc, v) => {
-                const date = v.arrivalDate.slice(0, 10);
-                acc[date] = (acc[date] || 0) + (v.groupCount || 1);
-                return acc;
-            }, {});
-            const sortedDates = Object.keys(trendData).sort();
-            const trendLabels = sortedDates.map(date => formatDate(date));
-            const trendValues = sortedDates.map(date => trendData[date]);
-
-            // 2. Province Distribution Data
+            destroyAllCharts();
+            const occupancyData = {};
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            visitors.forEach(v => {
+                const arrival = new Date(v.arrivalDate);
+                arrival.setHours(0, 0, 0, 0);
+                const departure = v.departureDate ? new Date(v.departureDate) : null;
+                if (departure) departure.setHours(0, 0, 0, 0);
+                let currentDate = new Date(arrival);
+                while (currentDate.getTime() <= (departure ? departure.getTime() : today.getTime())) {
+                    const dateStr = currentDate.toISOString().split('T')[0];
+                    occupancyData[dateStr] = (occupancyData[dateStr] || 0) + (v.groupCount || 1);
+                    currentDate.setDate(currentDate.getDate() + 1);
+                }
+            });
+            const sortedOccupancyDates = Object.keys(occupancyData).sort();
+            const occupancyLabels = sortedOccupancyDates.map(date => formatDate(date));
+            const occupancyValues = sortedOccupancyDates.map(date => occupancyData[date]);
             const provinceCount = visitors.reduce((acc, v) => {
                 const province = getProvince(v.address?.split('،').pop()?.trim());
                 acc[province] = (acc[province] || 0) + (v.groupCount || 1);
                 return acc;
             }, {});
-
-            // 3. Purpose Distribution Data
             const purposeCount = visitors.reduce((acc, v) => {
                 const purpose = v.purpose || 'نامعلوم';
                 acc[purpose] = (acc[purpose] || 0) + 1;
                 return acc;
             }, {});
-
-            // 4. Visitor Type Data
             const typeCount = visitors.reduce((acc, v) => {
                 acc[v.type] = (acc[v.type] || 0) + 1;
                 return acc;
             }, {});
-
-            // Chart Initializations
+            const stayDurationBuckets = { '1-3 دن': 0, '4-7 دن': 0, '8-14 دن': 0, '15+ دن': 0 };
+            visitors.forEach(v => {
+                if (v.arrivalDate && v.departureDate) {
+                    const arrival = new Date(v.arrivalDate);
+                    const departure = new Date(v.departureDate);
+                    const diffDays = Math.ceil(Math.abs(departure - arrival) / (1000 * 60 * 60 * 24)) + 1;
+                    if (diffDays >= 1 && diffDays <= 3) stayDurationBuckets['1-3 دن']++;
+                    else if (diffDays >= 4 && diffDays <= 7) stayDurationBuckets['4-7 دن']++;
+                    else if (diffDays >= 8 && diffDays <= 14) stayDurationBuckets['8-14 دن']++;
+                    else if (diffDays >= 15) stayDurationBuckets['15+ دن']++;
+                }
+            });
+            const monthlyArrivals = {};
+            visitors.forEach(v => {
+                const date = new Date(v.arrivalDate);
+                const yearMonth = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                monthlyArrivals[yearMonth] = (monthlyArrivals[yearMonth] || 0) + (v.groupCount || 1);
+            });
+            const sortedMonths = Object.keys(monthlyArrivals).sort();
+            const monthlyLabels = sortedMonths;
+            const monthlyValues = sortedMonths.map(month => monthlyArrivals[month]);
+            const purposeTrends = {};
+            const uniquePurposes = [...new Set(visitors.map(v => v.purpose).filter(Boolean))];
+            visitors.forEach(v => {
+                const month = new Date(v.arrivalDate).toISOString().slice(0, 7);
+                if (!purposeTrends[month]) purposeTrends[month] = {};
+                if (v.purpose) purposeTrends[month][v.purpose] = (purposeTrends[month][v.purpose] || 0) + 1;
+            });
+            const sortedMonthsForPurpose = Object.keys(purposeTrends).sort();
+            const purposeTrendDatasets = uniquePurposes.map((purpose, index) => {
+                return {
+                    label: purpose,
+                    data: sortedMonthsForPurpose.map(month => purposeTrends[month][purpose] || 0),
+                    borderColor: chartColors[index % chartColors.length],
+                    fill: false,
+                    tension: 0.1
+                };
+            });
+            const dailyArrivals = {
+                'اتوار': 0, 'سوموار': 0, 'منگل': 0, 'بدھ': 0, 'جمعرات': 0, 'جمعہ': 0, 'ہفتہ': 0
+            };
+            const dayNames = ['اتوار', 'سوموار', 'منگل', 'بدھ', 'جمعرات', 'جمعہ', 'ہفتہ'];
+            visitors.forEach(v => {
+                const dayOfWeek = new Date(v.arrivalDate).getDay();
+                dailyArrivals[dayNames[dayOfWeek]] = (dailyArrivals[dayNames[dayOfWeek]] || 0) + (v.groupCount || 1);
+            });
+            const dailyLabels = dayNames;
+            const dailyValues = dayNames.map(day => dailyArrivals[day]);
+            const hourlyArrivals = {};
+            for (let i = 0; i < 24; i++) {
+                hourlyArrivals[String(i).padStart(2, '0') + ':00'] = 0;
+            }
+            visitors.forEach(v => {
+                if (v.arrivalTime) {
+                    const hour = v.arrivalTime.split(':')[0];
+                    hourlyArrivals[hour + ':00'] = (hourlyArrivals[hour + ':00'] || 0) + (v.groupCount || 1);
+                }
+            });
+            const hourlyLabels = Object.keys(hourlyArrivals).sort();
+            const hourlyValues = hourlyLabels.map(hour => hourlyArrivals[hour]);
             analyticsCharts.visitorsOverTime = new Chart(document.getElementById('visitorsOverTimeChart'), {
                 type: 'line',
-                data: { labels: trendLabels, datasets: [{ label: 'کل افراد', data: trendValues, borderColor: 'var(--primary-color)', tension: 0.1, fill: false }] },
-                options: { scales: { y: { beginAtZero: true, ticks: { color: fontColor }, grid: { color: gridColor } }, x: { ticks: { color: fontColor }, grid: { color: gridColor } } }, plugins: { legend: { labels: { color: fontColor } } } }
+                data: { labels: occupancyLabels, datasets: [{ label: 'کل افراد موجود', data: occupancyValues, borderColor: 'var(--primary-color)', tension: 0.1, fill: true, backgroundColor: 'rgba(44, 90, 160, 0.2)' }] },
+                options: { responsive: true, scales: { y: { beginAtZero: true, ticks: { color: fontColor }, grid: { color: gridColor } }, x: { ticks: { color: fontColor }, grid: { color: gridColor } } }, plugins: { legend: { labels: { color: fontColor } } } }
             });
-
             analyticsCharts.provinceDistribution = new Chart(document.getElementById('provinceDistributionChart'), {
                 type: 'doughnut',
                 data: { labels: Object.keys(provinceCount), datasets: [{ data: Object.values(provinceCount), backgroundColor: chartColors }] },
                 options: { responsive: true, plugins: { legend: { position: 'top', labels: { color: fontColor } } } }
             });
-
             analyticsCharts.purposeDistribution = new Chart(document.getElementById('purposeDistributionChart'), {
                 type: 'bar',
                 data: { labels: Object.keys(purposeCount), datasets: [{ label: 'زائرین کی تعداد', data: Object.values(purposeCount), backgroundColor: chartColors[1] }] },
-                options: { indexAxis: 'y', scales: { y: { ticks: { color: fontColor }, grid: { color: gridColor } }, x: { ticks: { color: fontColor }, grid: { color: gridColor } } }, plugins: { legend: { display: false } } }
+                options: { indexAxis: 'y', responsive: true, scales: { y: { ticks: { color: fontColor }, grid: { color: gridColor } }, x: { beginAtZero: true, ticks: { color: fontColor }, grid: { color: gridColor } } }, plugins: { legend: { display: false } } }
             });
-
             analyticsCharts.visitorType = new Chart(document.getElementById('visitorTypeChart'), {
                 type: 'pie',
                 data: { labels: Object.keys(typeCount), datasets: [{ data: Object.values(typeCount), backgroundColor: [chartColors[0], chartColors[3]] }] },
                 options: { responsive: true, plugins: { legend: { position: 'top', labels: { color: fontColor } } } }
+            });
+            analyticsCharts.stayDuration = new Chart(document.getElementById('stayDurationChart'), {
+                type: 'bar',
+                data: { labels: Object.keys(stayDurationBuckets), datasets: [{ label: 'زائرین کی تعداد', data: Object.values(stayDurationBuckets), backgroundColor: chartColors[4] }] },
+                options: { responsive: true, scales: { y: { beginAtZero: true, ticks: { color: fontColor }, grid: { color: gridColor } }, x: { ticks: { color: fontColor }, grid: { color: gridColor } } }, plugins: { legend: { display: false } } }
+            });
+            analyticsCharts.monthlyArrivals = new Chart(document.getElementById('monthlyArrivalsChart'), {
+                type: 'bar',
+                data: { labels: monthlyLabels, datasets: [{ label: 'کل افراد کی آمد', data: monthlyValues, backgroundColor: chartColors[5] }] },
+                options: { responsive: true, scales: { y: { beginAtZero: true, ticks: { color: fontColor }, grid: { color: gridColor } }, x: { ticks: { color: fontColor }, grid: { color: gridColor } } }, plugins: { legend: { display: false } } }
+            });
+            analyticsCharts.purposeTrend = new Chart(document.getElementById('purposeTrendChart'), {
+                type: 'line',
+                data: { labels: sortedMonthsForPurpose, datasets: purposeTrendDatasets },
+                options: { responsive: true, scales: { y: { beginAtZero: true, ticks: { color: fontColor }, grid: { color: gridColor } }, x: { ticks: { color: fontColor }, grid: { color: gridColor } } }, plugins: { legend: { labels: { color: fontColor } } } }
+            });
+            analyticsCharts.dailyArrivals = new Chart(document.getElementById('dailyArrivalsChart'), {
+                type: 'bar',
+                data: { labels: dailyLabels, datasets: [{ label: 'کل افراد کی آمد', data: dailyValues, backgroundColor: chartColors[6] }] },
+                options: { responsive: true, scales: { y: { beginAtZero: true, ticks: { color: fontColor }, grid: { color: gridColor } }, x: { ticks: { color: fontColor }, grid: { color: gridColor } } }, plugins: { legend: { display: false } } }
+            });
+            analyticsCharts.hourlyArrivals = new Chart(document.getElementById('hourlyArrivalsChart'), {
+                type: 'bar',
+                data: { labels: hourlyLabels, datasets: [{ label: 'کل افراد کی آمد', data: hourlyValues, backgroundColor: chartColors[0] }] },
+                options: { responsive: true, scales: { y: { beginAtZero: true, ticks: { color: fontColor }, grid: { color: gridColor } }, x: { ticks: { color: fontColor }, grid: { color: gridColor } } }, plugins: { legend: { display: false } } }
             });
         }
         function loadAnalytics() {
             const dateFrom = document.getElementById('analytics-date-from').value;
             const dateTo = document.getElementById('analytics-date-to').value;
             const typeFilter = document.getElementById('analytics-type-filter').value;
+            const compareFrom1 = document.getElementById('compare-from1').value;
+            const compareTo1 = document.getElementById('compare-to1').value;
+            const compareFrom2 = document.getElementById('compare-from2').value;
+            const compareTo2 = document.getElementById('compare-to2').value;
+            const groupTagCompareSelect = document.getElementById('group-tag-compare');
+            const selectedGroupTags = Array.from(groupTagCompareSelect.selectedOptions).map(option => option.value);
             const transaction = db.transaction(['visitors'], 'readonly');
             const objectStore = transaction.objectStore('visitors');
             const request = objectStore.getAll();
             request.onsuccess = function () {
                 let visitors = request.result;
-                if (dateFrom) visitors = visitors.filter(v => v.arrivalDate >= dateFrom);
-                if (dateTo) visitors = visitors.filter(v => v.arrivalDate <= dateTo);
-                if (typeFilter !== 'all') visitors = visitors.filter(v => v.type === typeFilter);
-                analyticData = visitors;
-
+                let filteredForChartsAndTables = visitors;
+                if (dateFrom) filteredForChartsAndTables = filteredForChartsAndTables.filter(v => v.arrivalDate >= dateFrom);
+                if (dateTo) filteredForChartsAndTables = filteredForChartsAndTables.filter(v => v.arrivalDate <= dateTo);
+                if (typeFilter !== 'all') filteredForChartsAndTables = filteredForChartsAndTables.filter(v => v.type === typeFilter);
+                analyticData = filteredForChartsAndTables;
                 destroyAllCharts();
-                document.getElementById('analytics-tables').innerHTML = ''; // Clear old tables
-
+                document.getElementById('analytics-tables').innerHTML = '';
+                document.getElementById('comparative-analysis-content').innerHTML = '';
                 if (analyticData.length === 0) {
                     document.getElementById('analytics-charts').innerHTML = '<p style="text-align:center;">اس مدت کے لیے کوئی ڈیٹا دستیاب نہیں۔</p>';
                     ['analytics-peak-day', 'analytics-avg-group-size', 'analytics-return-visitors', 'analytics-popular-purpose'].forEach(id => document.getElementById(id).textContent = '--');
                     updatePagination('analytics');
                     return;
                 }
-
                 updateAnalyticsStats(analyticData);
-                renderAllAnalyticsCharts(analyticData); // New function to render charts
-                displayAnalyticsTables(analyticData); // Existing function to render tables
+                renderAllAnalyticsCharts(analyticData);
+                displayAnalyticsTables(analyticData);
+                if (compareFrom1 && compareTo1 && compareFrom2 && compareTo2) {
+                    performPeriodComparison(visitors, compareFrom1, compareTo1, compareFrom2, compareTo2);
+                } else {
+                    document.getElementById('comparative-analysis-content').innerHTML = '<p>موازنہ کا تجزیہ دیکھنے کے لیے دو مدتیں منتخب کریں۔</p>';
+                }
+                performIndividualGroupAnalysis(visitors);
+                if (selectedGroupTags.length >= 2) {
+                    performGroupTagComparison(visitors, selectedGroupTags);
+                } else {
+                    document.getElementById('comparative-analysis-content').innerHTML += '<p>گروپ ٹیگ کا موازنہ کرنے کے لیے کم از کم دو گروپ ٹیگز منتخب کریں۔</p>';
+                }
             };
             request.onerror = function (event) {
                 console.error('Error loading analytics data:', event.target.error);
@@ -2219,8 +2729,8 @@
             const cityCount = {}, purposeCount = {}, provinceCount = {}, dayCount = {};
             visitors.forEach(v => {
                 const members = v.groupCount || 1;
-                const city = v.address?.split('،').pop()?.trim() || 'نامعلوم';
-                const province = getProvince(city);
+                const city = v.address?.split('،')[0]?.trim() || 'نامعلوم';
+                const province = getProvince(v.address?.split('،').pop()?.trim());
                 cityCount[city] = (cityCount[city] || 0) + members;
                 provinceCount[province] = (provinceCount[province] || 0) + members;
                 if (v.purpose) purposeCount[v.purpose] = (purposeCount[v.purpose] || 0) + 1;
@@ -2246,70 +2756,306 @@
             chartsContainer.innerHTML = analyticsHtml;
             updatePagination('analytics');
         }
+        function populateGroupTagCompareSelect() {
+            const select = document.getElementById('group-tag-compare');
+            select.innerHTML = '';
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = 'منتخب کریں...';
+            select.appendChild(defaultOption);
+            const transaction = db.transaction(['visitors'], 'readonly');
+            const objectStore = transaction.objectStore('visitors');
+            const request = objectStore.index('groupTag').getAllKeys();
+            request.onsuccess = function () {
+                const groupTags = new Set(request.result.filter(tag => typeof tag === 'string' && tag.trim() !== ''));
+                Array.from(groupTags).sort().forEach(tag => {
+                    const option = document.createElement('option');
+                    option.value = tag;
+                    option.textContent = tag;
+                    select.appendChild(option);
+                });
+            };
+        }
+        function getPeriodMetrics(visitors, fromDate, toDate) {
+            const periodVisitors = visitors.filter(v => {
+                const arrival = new Date(v.arrivalDate);
+                return arrival >= new Date(fromDate) && arrival <= new Date(toDate);
+            });
+            const totalVisitors = periodVisitors.length;
+            const totalAttendees = periodVisitors.reduce((sum, v) => sum + (v.groupCount || 1), 0);
+            const totalGroups = periodVisitors.filter(v => v.type === 'گروپ').length;
+            const stayDurations = periodVisitors
+                .filter(v => v.departureDate && v.arrivalDate)
+                .map(v => {
+                    const arrival = new Date(v.arrivalDate);
+                    const departure = new Date(v.departureDate);
+                    const diffTime = Math.abs(departure.getTime() - arrival.getTime());
+                    return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                })
+                .filter(duration => !isNaN(duration) && duration > 0);
+            const averageStay = stayDurations.length > 0 ?
+                (stayDurations.reduce((a, b) => a + b, 0) / stayDurations.length).toFixed(1) : '0';
+            const purposeCount = {};
+            periodVisitors.forEach(v => {
+                const purpose = v.purpose || 'نامعلوم';
+                purposeCount[purpose] = (purposeCount[purpose] || 0) + 1;
+            });
+            const topPurpose = Object.keys(purposeCount).length ? Object.entries(purposeCount).sort((a, b) => b[1] - a[1])[0][0] : 'نامعلوم';
+            const cityCount = {};
+            periodVisitors.forEach(v => {
+                const city = v.address?.split('،')[0]?.trim() || 'نامعلوم';
+                cityCount[city] = (cityCount[city] || 0) + (v.groupCount || 1);
+            });
+            const topCity = Object.keys(cityCount).length ? Object.entries(cityCount).sort((a, b) => b[1] - a[1])[0][0] : 'نامعلوم';
+            return {
+                totalVisitors,
+                totalAttendees,
+                totalGroups,
+                averageStay,
+                topPurpose,
+                topCity
+            };
+        }
+        function performPeriodComparison(visitors, from1, to1, from2, to2) {
+            const metrics1 = getPeriodMetrics(visitors, from1, to1);
+            const metrics2 = getPeriodMetrics(visitors, from2, to2);
+            let html = `
+                <div class="reports-section">
+                    <h3>مدت کا موازنہ: ${formatDate(from1)} تا ${formatDate(to1)} بمقابلہ ${formatDate(from2)} تا ${formatDate(to2)}</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>اشاریہ</th>
+                                <th>پہلی مدت</th>
+                                <th>دوسری مدت</th>
+                                <th>تبدیلی</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>کل زائرین</td>
+                                <td>${metrics1.totalVisitors}</td>
+                                <td>${metrics2.totalVisitors}</td>
+                                <td>${metrics2.totalVisitors - metrics1.totalVisitors}</td>
+                            </tr>
+                            <tr>
+                                <td>کل حاضری (افراد)</td>
+                                <td>${metrics1.totalAttendees}</td>
+                                <td>${metrics2.totalAttendees}</td>
+                                <td>${metrics2.totalAttendees - metrics1.totalAttendees}</td>
+                            </tr>
+                            <tr>
+                                <td>کل گروپس</td>
+                                <td>${metrics1.totalGroups}</td>
+                                <td>${metrics2.totalGroups}</td>
+                                <td>${metrics2.totalGroups - metrics1.totalGroups}</td>
+                            </tr>
+                            <tr>
+                                <td>اوسط قیام (دن)</td>
+                                <td>${metrics1.averageStay}</td>
+                                <td>${metrics2.averageStay}</td>
+                                <td>${(parseFloat(metrics2.averageStay) - parseFloat(metrics1.averageStay)).toFixed(1)}</td>
+                            </tr>
+                            <tr>
+                                <td>مشہور ترین مقصد</td>
+                                <td>${metrics1.topPurpose}</td>
+                                <td>${metrics2.topPurpose}</td>
+                                <td>--</td>
+                            </tr>
+                            <tr>
+                                <td>مشہور ترین شہر</td>
+                                <td>${metrics1.topCity}</td>
+                                <td>${metrics2.topCity}</td>
+                                <td>--</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            document.getElementById('comparative-analysis-content').innerHTML += html;
+        }
+        function performIndividualGroupAnalysis(visitors) {
+            const individuals = visitors.filter(v => v.type === 'فرد');
+            const groups = visitors.filter(v => v.type === 'گروپ');
+            const getAnalysisData = (data) => {
+                const totalVisitors = data.length;
+                const totalAttendees = data.reduce((sum, v) => sum + (v.groupCount || 1), 0);
+                const stayDurations = data
+                    .filter(v => v.departureDate && v.arrivalDate)
+                    .map(v => {
+                        const arrival = new Date(v.arrivalDate);
+                        const departure = new Date(v.departureDate);
+                        const diffTime = Math.abs(departure.getTime() - arrival.getTime());
+                        return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                    })
+                    .filter(duration => !isNaN(duration) && duration > 0);
+                const averageStay = stayDurations.length > 0 ? (stayDurations.reduce((a, b) => a + b, 0) / stayDurations.length).toFixed(1) : '0';
+                const purposeCount = {};
+                data.forEach(v => {
+                    const purpose = v.purpose || 'نامعلوم';
+                    purposeCount[purpose] = (purposeCount[purpose] || 0) + 1;
+                });
+                const topPurpose = Object.keys(purposeCount).length ? Object.entries(purposeCount).sort((a, b) => b[1] - a[1])[0][0] : 'نامعلوم';
+                const cityCount = {};
+                data.forEach(v => {
+                    const city = v.address?.split('،')[0]?.trim() || 'نامعلوم';
+                    cityCount[city] = (cityCount[city] || 0) + (v.groupCount || 1);
+                });
+                const topCity = Object.keys(cityCount).length ? Object.entries(cityCount).sort((a, b) => b[1] - a[1])[0][0] : 'نامعلوم';
+                return { totalVisitors, totalAttendees, averageStay, topPurpose, topCity };
+            };
+            const individualData = getAnalysisData(individuals);
+            const groupData = getAnalysisData(groups);
+            let html = `
+                <div class="reports-section">
+                    <h3>انفرادی بمقابلہ گروپ تجزیہ</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>اشاریہ</th>
+                                <th>انفرادی زائرین</th>
+                                <th>گروپ زائرین</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>کل زائرین کی آمد</td><td>${individualData.totalVisitors}</td><td>${groupData.totalVisitors}</td></tr>
+                            <tr><td>کل افراد کی حاضری</td><td>${individualData.totalAttendees}</td><td>${groupData.totalAttendees}</td></tr>
+                            <tr><td>اوسط قیام (دن)</td><td>${individualData.averageStay}</td><td>${groupData.averageStay}</td></tr>
+                            <tr><td>مشہور ترین مقصد</td><td>${individualData.topPurpose}</td><td>${groupData.topPurpose}</td></tr>
+                            <tr><td>مشہور ترین شہر</td><td>${individualData.topCity}</td><td>${groupData.topCity}</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            document.getElementById('comparative-analysis-content').innerHTML += html;
+        }
+        function performGroupTagComparison(visitors, selectedGroupTags) {
+            if (selectedGroupTags.length < 2) return;
+            let html = `
+                <div class="reports-section">
+                    <h3>گروپ ٹیگ کا موازنہ</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>اشاریہ</th>
+            `;
+            selectedGroupTags.forEach(tag => {
+                html += `<th>${tag}</th>`;
+            });
+            html += `
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            const metrics = {
+                'کل زائرین': {},
+                'کل افراد': {},
+                'اوسط قیام (دن)': {},
+                'مشہور ترین مقصد': {},
+                'مشہور ترین شہر': {}
+            };
+            selectedGroupTags.forEach(tag => {
+                const groupVisitors = visitors.filter(v => v.groupTag === tag);
+                const data = getPeriodMetrics(groupVisitors, '0000-01-01', '9999-12-31');
+                metrics['کل زائرین'][tag] = data.totalVisitors;
+                metrics['کل افراد'][tag] = data.totalAttendees;
+                metrics['اوسط قیام (دن)'][tag] = data.averageStay;
+                metrics['مشہور ترین مقصد'][tag] = data.topPurpose;
+                metrics['مشہور ترین شہر'][tag] = data.topCity;
+            });
+            for (const key in metrics) {
+                html += `<tr><td>${key}</td>`;
+                selectedGroupTags.forEach(tag => {
+                    html += `<td>${metrics[key][tag]}</td>`;
+                });
+                html += `</tr>`;
+            }
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            document.getElementById('comparative-analysis-content').innerHTML += html;
+        }
         function exportToExcel(type) {
             const transaction = db.transaction(['visitors'], 'readonly');
             const objectStore = transaction.objectStore('visitors');
             const request = objectStore.getAll();
             request.onsuccess = function () {
                 let visitorsToExport = request.result;
+                let dataToExport;
+                let filenamePrefix = 'رپورٹ';
                 if (type === 'filtered') {
                     visitorsToExport = filteredVisitors;
-                } else if (type === 'summary') {
-                    const summaryData = getSummaryData(visitorsToExport);
-                    const wb = XLSX.utils.book_new();
-                    const ws = XLSX.utils.json_to_sheet(summaryData);
-                    XLSX.utils.book_append_sheet(wb, ws, 'خلاصہ_رپورٹ');
-                    const filename = `خلاصہ_رپورٹ_${new Date().toISOString().split('T')[0]}.xlsx`;
-                    XLSX.writeFile(wb, filename);
-                    return;
-                } else if (type === 'detailed') {
-                    const dateFrom = document.getElementById('report-date-from')?.value;
-                    const dateTo = document.getElementById('report-date-to')?.value;
+                    filenamePrefix = 'فلٹرڈ_زائرین';
+                } else if (type === 'current_report') {
                     const reportType = document.getElementById('report-type')?.value || 'all';
-                    if (dateFrom) visitorsToExport = visitorsToExport.filter(v => v.arrivalDate >= dateFrom);
-                    if (dateTo) visitorsToExport = visitorsToExport.filter(v => v.arrivalDate <= dateTo);
-                    const now = new Date();
-                    now.setHours(0, 0, 0, 0);
-                    if (reportType !== 'all' && reportType !== 'custom') {
-                        visitorsToExport = visitorsToExport.filter(v => {
-                            const date = new Date(v.arrivalDate);
-                            date.setHours(0, 0, 0, 0);
-                            switch (reportType) {
-                                case 'daily': return date.getTime() === now.getTime();
-                                case 'weekly':
-                                    const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-                                    oneWeekAgo.setHours(0, 0, 0, 0);
-                                    return date >= oneWeekAgo;
-                                case 'monthly': return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
-                                case 'yearly': return date.getFullYear() === now.getFullYear();
-                                default: return true;
-                            }
-                        });
+                    if (reportType === 'period-summary') {
+                        dataToExport = getSummaryData(reportedVisitors);
+                        filenamePrefix = 'خلاصہ_رپورٹ';
+                    } else if (reportType === 'purpose-breakdown') {
+                        dataToExport = getPurposeBreakdownData(reportedVisitors);
+                        filenamePrefix = 'مقصد_تقسیم_رپورٹ';
+                    } else if (reportType === 'geographic-breakdown') {
+                        dataToExport = getGeographicBreakdownData(reportedVisitors);
+                        filenamePrefix = 'جغرافیائی_تقسیم_رپورٹ';
+                    } else {
+                        dataToExport = prepareDetailedVisitorData(reportedVisitors);
+                        filenamePrefix = 'تفصیلی_رپورٹ';
                     }
+                } else if (type === 'summary') {
+                    dataToExport = getSummaryData(visitorsToExport);
+                    filenamePrefix = 'خلاصہ_رپورٹ';
+                } else if (type === 'detailed') {
+                    dataToExport = prepareDetailedVisitorData(visitorsToExport);
+                    filenamePrefix = 'تفصیلی_رپورٹ';
                 }
-                const data = visitorsToExport.map(v => ({
-                    'شناختی نمبر': v.id,
-                    'نام': v.name,
-                    'فون نمبر': v.phone || '',
-                    'پتہ': v.address || '',
-                    'تاریخ آمد': formatDate(v.arrivalDate),
-                    'تاریخ روانگی': v.departureDate ? formatDate(v.departureDate) : '',
-                    'قیام کے دن': v.departureDate && v.arrivalDate ? (Math.ceil(Math.abs(new Date(v.departureDate).getTime() - new Date(v.arrivalDate).getTime()) / (1000 * 60 * 60 * 24)) + 1) : '',
-                    'قسم': v.type,
-                    'افراد کی تعداد': v.groupCount || 1,
-                    'مقصد': v.purpose || '',
-                    'گروپ ٹیگ': v.groupTag || '',
-                    'ذمہ دار شخص': v.responsiblePerson || '',
-                    'خصوصی نوٹس': v.specialNotes || '',
-                    'موجودگی': isVisitorPresent(v) ? 'موجود' : 'غیر موجود',
-                    'شامل ہونے کی تاریخ': formatDate(v.addedDate)
-                }));
-                exportVisitorsData(data, type);
+                if (!dataToExport) {
+                    dataToExport = prepareDetailedVisitorData(visitorsToExport);
+                }
+                if (dataToExport.length === 0) {
+                    alert('ایکسپورٹ کے لیے کوئی ڈیٹا نہیں ہے۔');
+                    return;
+                }
+                const wb = XLSX.utils.book_new();
+                const ws = XLSX.utils.json_to_sheet(dataToExport);
+                const range = XLSX.utils.decode_range(ws['!ref']);
+                for (let C = range.s.c; C <= range.e.c; ++C) {
+                    const address = XLSX.utils.encode_col(C) + "1";
+                    if (!ws[address]) continue;
+                    ws[address].s = {
+                        font: { bold: true },
+                        fill: { bgColor: { indexed: 64 }, fgColor: { rgb: "FFFFFF" } }
+                    };
+                }
+                XLSX.utils.book_append_sheet(wb, ws, 'زائرین کی فہرست');
+                const filename = `${filenamePrefix}_${new Date().toISOString().split('T')[0]}.xlsx`;
+                XLSX.writeFile(wb, filename);
             };
             request.onerror = function (event) {
                 console.error('Error fetching data for Excel export:', event.target.error);
                 alert('ڈیٹا ایکسپورٹ کرنے میں خرابی پیش آئی۔');
             };
+        }
+        function prepareDetailedVisitorData(visitors) {
+            return visitors.map(v => ({
+                'شناختی نمبر': v.id,
+                'نام': v.name,
+                'فون نمبر': v.phone || '',
+                'پتہ': v.address || '',
+                'تاریخ آمد': formatDate(v.arrivalDate),
+                'آمد کا وقت': v.arrivalTime || '',
+                'تاریخ روانگی': v.departureDate ? formatDate(v.departureDate) : '',
+                'قیام کے دن': v.departureDate && v.arrivalDate ? (Math.ceil(Math.abs(new Date(v.departureDate).getTime() - new Date(v.arrivalDate).getTime()) / (1000 * 60 * 60 * 24)) + 1) : '',
+                'قسم': v.type,
+                'افراد کی تعداد': v.groupCount || 1,
+                'مقصد': v.purpose || '',
+                'گروپ ٹیگ': v.groupTag || '',
+                'ذمہ دار شخص': v.responsiblePerson || '',
+                'خصوصی نوٹس': v.specialNotes || '',
+                'موجودگی': isVisitorPresent(v) ? 'موجود' : (isVisitorOverstay(v) ? 'حد سے زیادہ قیام' : 'غیر موجود'),
+                'شامل ہونے کی تاریخ': formatDate(v.addedDate)
+            }));
         }
         function getSummaryData(visitors) {
             const totalVisitors = visitors.length;
@@ -2320,8 +3066,8 @@
             const cityCount = {}, purposeCount = {}, provinceCount = {};
             visitors.forEach(v => {
                 const members = v.groupCount || 1;
-                const city = v.address?.split('،').pop()?.trim() || 'نامعلوم';
-                const province = getProvince(city);
+                const city = v.address?.split('،')[0]?.trim() || 'نامعلوم';
+                const province = getProvince(v.address?.split('،').pop()?.trim());
                 cityCount[city] = (cityCount[city] || 0) + members;
                 provinceCount[province] = (provinceCount[province] || 0) + members;
                 if (v.purpose) purposeCount[v.purpose] = (purposeCount[v.purpose] || 0) + 1;
@@ -2350,25 +3096,48 @@
             });
             return summary;
         }
-        function exportVisitorsData(data, type) {
-            if (data.length === 0) {
-                alert('ایکسپورٹ کے لیے کوئی ڈیٹا نہیں ہے۔');
-                return;
-            }
-            const wb = XLSX.utils.book_new();
-            const ws = XLSX.utils.json_to_sheet(data);
-            const range = XLSX.utils.decode_range(ws['!ref']);
-            for (let C = range.s.c; C <= range.e.c; ++C) {
-                const address = XLSX.utils.encode_col(C) + "1";
-                if (!ws[address]) continue;
-                ws[address].s = {
-                    font: { bold: true },
-                    fill: { bgColor: { indexed: 64 }, fgColor: { rgb: "FFFFFF" } }
-                };
-            }
-            XLSX.utils.book_append_sheet(wb, ws, 'زائرین کی فہرست');
-            const filename = `زائرین_رپورٹ_${type}_${new Date().toISOString().split('T')[0]}.xlsx`;
-            XLSX.writeFile(wb, filename);
+        function getPurposeBreakdownData(visitors) {
+            const purposeCount = {};
+            visitors.forEach(v => {
+                const purpose = v.purpose || 'نامعلوم';
+                purposeCount[purpose] = (purposeCount[purpose] || 0) + (v.groupCount || 1);
+            });
+            const totalAttendees = visitors.reduce((sum, v) => sum + (v.groupCount || 1), 0);
+            return Object.entries(purposeCount)
+                .sort((a, b) => b[1] - a[1])
+                .map(([purpose, count]) => ({
+                    'مقصد': purpose,
+                    'کل افراد': count,
+                    'فیصد': totalAttendees > 0 ? ((count / totalAttendees) * 100).toFixed(1) + '%' : '0%'
+                }));
+        }
+        function getGeographicBreakdownData(visitors) {
+            const cityCount = {};
+            const provinceCount = {};
+            visitors.forEach(v => {
+                const members = v.groupCount || 1;
+                const city = v.address?.split('،')[0]?.trim() || 'نامعلوم';
+                const province = getProvince(v.address?.split('،').pop()?.trim());
+                cityCount[city] = (cityCount[city] || 0) + members;
+                provinceCount[province] = (provinceCount[province] || 0) + members;
+            });
+            const totalAttendees = visitors.reduce((sum, v) => sum + (v.groupCount || 1), 0);
+            const provinceData = Object.entries(provinceCount)
+                .sort((a, b) => b[1] - a[1])
+                .map(([province, count]) => ({
+                    'صوبہ': province,
+                    'کل افراد': count,
+                    'فیصد': totalAttendees > 0 ? ((count / totalAttendees) * 100).toFixed(1) + '%' : '0%'
+                }));
+            const cityData = Object.entries(cityCount)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 10)
+                .map(([city, count]) => ({
+                    'شہر': city,
+                    'کل افراد': count,
+                    'فیصد': totalAttendees > 0 ? ((count / totalAttendees) * 100).toFixed(1) + '%' : '0%'
+                }));
+            return [...provinceData, { 'صوبہ': '', 'کل افراد': '', 'فیصد': '' }, ...cityData];
         }
         function exportFiltered() {
             exportToExcel('filtered');
@@ -2408,7 +3177,7 @@
             generatePDFReport();
         }
         function backupData() {
-            const transaction = db.transaction(['visitors', 'addresses'], 'readonly');
+            const transaction = db.transaction(['visitors', 'addresses', 'purposes'], 'readonly');
             const promises = [];
             promises.push(new Promise((resolve, reject) => {
                 const visitorsStore = transaction.objectStore('visitors');
@@ -2422,12 +3191,19 @@
                 addressesRequest.onsuccess = () => resolve({ addresses: addressesRequest.result });
                 addressesRequest.onerror = (event) => reject(event.target.error);
             }));
+            promises.push(new Promise((resolve, reject) => {
+                const purposesStore = transaction.objectStore('purposes');
+                const purposesRequest = purposesStore.getAll();
+                purposesRequest.onsuccess = () => resolve({ purposes: purposesRequest.result });
+                purposesRequest.onerror = (event) => reject(event.target.error);
+            }));
             Promise.all(promises).then(results => {
                 const data = {
                     visitors: results[0].visitors,
                     addresses: results[1].addresses,
+                    purposes: results[2].purposes,
                     exportDate: new Date().toISOString(),
-                    version: '2.0'
+                    version: '3.0'
                 };
                 const dataStr = JSON.stringify(data, null, 2);
                 const dataBlob = new Blob([dataStr], { type: 'application/json' });
@@ -2455,9 +3231,10 @@
                         return;
                     }
                     if (confirm('کیا آپ واقعی ڈیٹا بحال کرنا چاہتے ہیں؟ موجودہ ڈیٹا مٹ جائے گا اور نئے ڈیٹا سے بدل جائے گا۔')) {
-                        const transaction = db.transaction(['visitors', 'addresses'], 'readwrite');
+                        const transaction = db.transaction(['visitors', 'addresses', 'purposes'], 'readwrite');
                         const visitorsStore = transaction.objectStore('visitors');
                         const addressesStore = transaction.objectStore('addresses');
+                        const purposesStore = transaction.objectStore('purposes');
                         const visitorClearRequest = visitorsStore.clear();
                         visitorClearRequest.onsuccess = function () {
                             data.visitors.forEach(visitor => {
@@ -2478,10 +3255,23 @@
                         addressClearRequest.onerror = function (event) {
                             console.error('Error clearing addresses store:', event.target.error);
                         };
+                        const purposesClearRequest = purposesStore.clear();
+                        purposesClearRequest.onsuccess = function () {
+                            if (data.purposes) {
+                                data.purposes.forEach(purpose => {
+                                    purposesStore.add(purpose);
+                                });
+                            }
+                        };
+                        purposesClearRequest.onerror = function (event) {
+                            console.error('Error clearing purposes store:', event.target.error);
+                        };
                         transaction.oncomplete = function () {
                             loadDashboard();
                             loadVisitorsList();
                             populateFilterOptions();
+                            populatePurposeSelects();
+                            populateGroupTagCompareSelect();
                             alert('ڈیٹا کامیابی سے بحال ہو گیا!');
                         };
                         transaction.onerror = function (event) {
@@ -2545,7 +3335,7 @@
         }
         function clearAllData() {
             if (confirm('کیا آپ واقعی تمام ڈیٹا صاف کرنا چاہتے ہیں؟ یہ عمل واپس نہیں ہو سکتا۔')) {
-                const transaction = db.transaction(['visitors', 'addresses'], 'readwrite');
+                const transaction = db.transaction(['visitors', 'addresses', 'purposes'], 'readwrite');
                 const visitorsClearReq = transaction.objectStore('visitors').clear();
                 visitorsClearReq.onerror = function (event) {
                     console.error('Error clearing visitors store:', event.target.error);
@@ -2554,10 +3344,16 @@
                 addressesClearReq.onerror = function (event) {
                     console.error('Error clearing addresses store:', event.target.error);
                 };
+                const purposesClearReq = transaction.objectStore('purposes').clear();
+                purposesClearReq.onerror = function (event) {
+                    console.error('Error clearing purposes store:', event.target.error);
+                };
                 transaction.oncomplete = function () {
                     loadDashboard();
                     loadVisitorsList();
                     populateFilterOptions();
+                    populatePurposeSelects();
+                    populateGroupTagCompareSelect();
                     alert('تمام ڈیٹا صاف کر دیا گیا!');
                 };
                 transaction.onerror = function (event) {
@@ -2565,6 +3361,126 @@
                     alert('تمام ڈیٹا صاف کرنے میں خرابی پیش آئی: ' + event.target.error.message);
                 };
             }
+        }
+        function showIncompleteRecords() {
+            const transaction = db.transaction(['visitors'], 'readonly');
+            const objectStore = transaction.objectStore('visitors');
+            const request = objectStore.getAll();
+            request.onsuccess = function () {
+                const allRecords = request.result;
+                const incomplete = allRecords.filter(v =>
+                    !v.phone || v.phone.trim() === '' ||
+                    !v.address || v.address.trim() === '' ||
+                    !v.departureDate || v.departureDate.trim() === ''
+                );
+                let html = `
+                    <h3>نامکمل ریکارڈز</h3>
+                    <p>${incomplete.length} نامکمل ریکارڈز ملے ہیں۔</p>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>نام</th>
+                                <th>فون</th>
+                                <th>پتہ</th>
+                                <th>تاریخ آمد</th>
+                                <th>تاریخ روانگی</th>
+                                <th>گمشدہ فیلڈز</th>
+                                <th>کارروائی</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                if (incomplete.length === 0) {
+                    html += `<tr><td colspan="7" style="text-align: center;">کوئی نامکمل ریکارڈز نہیں ہیں۔</td></tr>`;
+                } else {
+                    incomplete.forEach(v => {
+                        const missing = [];
+                        if (!v.phone || v.phone.trim() === '') missing.push('فون');
+                        if (!v.address || v.address.trim() === '') missing.push('پتہ');
+                        if (!v.departureDate || v.departureDate.trim() === '') missing.push('تاریخ روانگی');
+                        html += `
+                            <tr>
+                                <td>${v.name}</td>
+                                <td>${v.phone || '--'}</td>
+                                <td>${v.address || '--'}</td>
+                                <td>${formatDate(v.arrivalDate)}</td>
+                                <td>${v.departureDate ? formatDate(v.departureDate) : '--'}</td>
+                                <td>${missing.join(', ')}</td>
+                                <td><button class="btn btn-sm btn-warning" onclick="editVisitor(${v.id})">تبدیل کریں</button></td>
+                            </tr>
+                        `;
+                    });
+                }
+                html += `</tbody></table>`;
+                document.getElementById('data-quality-results').innerHTML = html;
+            };
+        }
+        function showPotentialDuplicates() {
+            const transaction = db.transaction(['visitors'], 'readonly');
+            const objectStore = transaction.objectStore('visitors');
+            const request = objectStore.getAll();
+            request.onsuccess = function () {
+                const allRecords = request.result;
+                const duplicates = [];
+                const processed = new Set();
+                for (let i = 0; i < allRecords.length; i++) {
+                    if (processed.has(allRecords[i].id)) continue;
+                    const current = allRecords[i];
+                    const possibleDuplicates = allRecords.filter((other, idx) => {
+                        if (current.id === other.id || processed.has(other.id)) return false;
+                        const nameMatch = current.name === other.name;
+                        const phoneMatch = current.phone && other.phone && current.phone === other.phone;
+                        return nameMatch || (phoneMatch && (current.name.includes(other.name) || other.name.includes(current.name)));
+                    });
+                    if (possibleDuplicates.length > 0) {
+                        duplicates.push([current, ...possibleDuplicates]);
+                        processed.add(current.id);
+                        possibleDuplicates.forEach(d => processed.add(d.id));
+                    }
+                }
+                let html = `
+                    <h3>ممکنہ نقلیں</h3>
+                    <p>${duplicates.length} ممکنہ نقلوں کے گروپس ملے ہیں۔</p>
+                `;
+                if (duplicates.length === 0) {
+                    html += `<p style="text-align: center;">کوئی ممکنہ نقلیں نہیں ہیں۔</p>`;
+                } else {
+                    duplicates.forEach((group, index) => {
+                        html += `
+                            <div class="reports-section" style="border: 1px solid var(--accent-color); margin-bottom: 20px;">
+                                <h4>نقلوں کا گروپ ${index + 1}</h4>
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>شناختی نمبر</th>
+                                            <th>نام</th>
+                                            <th>فون</th>
+                                            <th>پتہ</th>
+                                            <th>تاریخ آمد</th>
+                                            <th>مقصد</th>
+                                            <th>کارروائی</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                        `;
+                        group.forEach(v => {
+                            html += `
+                                <tr>
+                                    <td>${v.id}</td>
+                                    <td>${v.name}</td>
+                                    <td>${v.phone || '--'}</td>
+                                    <td>${v.address || '--'}</td>
+                                    <td>${formatDate(v.arrivalDate)}</td>
+                                    <td>${v.purpose || '--'}</td>
+                                    <td><button class="btn btn-sm btn-warning" onclick="editVisitor(${v.id})">تبدیل کریں</button> <button class="btn btn-sm btn-danger" onclick="deleteVisitor(${v.id})">حذف کریں</button></td>
+                                </tr>
+                            `;
+                        });
+                        html += `</tbody></table></div>`;
+                    });
+                }
+                document.getElementById('data-quality-results').innerHTML = html;
+            };
         }
         function updateRecordsPerPage() {
             recordsPerPageVisitors = parseInt(document.getElementById('records-per-page').value);
@@ -2608,6 +3524,7 @@
             localStorage.setItem('darkMode', document.body.classList.contains('dark'));
         }
         document.getElementById('arrival-date').value = new Date().toISOString().split('T')[0];
+        document.getElementById('arrival-time').value = new Date().toTimeString().split(' ')[0].substring(0, 5);
         if (localStorage.getItem('darkMode') === 'true') {
             toggleDarkMode();
         }
@@ -2675,26 +3592,29 @@
         document.getElementById('auto-backup').addEventListener('change', scheduleAutoBackup);
         initDB();
     </script>
-<script type="module">
-  import { Workbox } from 'https://storage.googleapis.com/workbox-cdn/releases/7.0.0/workbox-window.prod.mjs';
 
-  const swUrl = './sw.js';
-  const wb = new Workbox(swUrl);
+    <script type="module">
+        import { Workbox } from 'https://storage.googleapis.com/workbox-cdn/releases/7.0.0/workbox-window.prod.mjs';
 
-  // This event fires when a new service worker has installed but is waiting to activate.
-  wb.addEventListener('waiting', (event) => {
-    console.log('A new service worker is waiting to activate.');
-    // This sends a message to the waiting service worker, telling it to activate.
-    wb.messageSW({ type: 'SKIP_WAITING' });
-  });
+        const swUrl = './sw.js';
+        const wb = new Workbox(swUrl);
 
-  // This event fires when the new service worker has taken control.
-  wb.addEventListener('controlling', (event) => {
-    console.log('The new service worker is now in control. Reloading page for updates...');
-    window.location.reload();
-  });
+        // This event fires when a new service worker has installed but is waiting to activate.
+        wb.addEventListener('waiting', (event) => {
+            console.log('A new service worker is waiting to activate.');
+            // This sends a message to the waiting service worker, telling it to activate.
+            wb.messageSW({ type: 'SKIP_WAITING' });
+        });
 
-  // Register the service worker.
-  wb.register();
-</script></body>
+        // This event fires when the new service worker has taken control.
+        wb.addEventListener('controlling', (event) => {
+            console.log('The new service worker is now in control. Reloading page for updates...');
+            window.location.reload();
+        });
+
+        // Register the service worker.
+        wb.register();
+    </script>
+</body>
+
 </html>

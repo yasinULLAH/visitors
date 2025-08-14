@@ -1,21 +1,27 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Offline</title><link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/x-icon" href="favicon.ico">
-</head><body><h1>You are offline.</h1><script type="module">
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1" name="viewport"/><title>Offline</title><link href="manifest.json" rel="manifest"/>
+<link href="favicon.ico" rel="icon" type="image/x-icon"/>
+</head><body><h1>You are offline.</h1>
+<script type="module">
   import { Workbox } from 'https://storage.googleapis.com/workbox-cdn/releases/7.0.0/workbox-window.prod.mjs';
+
   const swUrl = './sw.js';
   const wb = new Workbox(swUrl);
 
-  wb.addEventListener('waiting', () => {
+  // This event fires when a new service worker has installed but is waiting to activate.
+  wb.addEventListener('waiting', (event) => {
     console.log('A new service worker is waiting to activate.');
+    // This sends a message to the waiting service worker, telling it to activate.
     wb.messageSW({ type: 'SKIP_WAITING' });
   });
 
-  wb.addEventListener('controlling', () => {
+  // This event fires when the new service worker has taken control.
+  wb.addEventListener('controlling', (event) => {
     console.log('The new service worker is now in control. Reloading page for updates...');
     window.location.reload();
   });
 
+  // Register the service worker.
   wb.register();
-</script>
-
-</body></html>
+</script></body></html>
