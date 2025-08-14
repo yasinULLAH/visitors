@@ -12,7 +12,7 @@ SHORT_NAME = "WebApp"
 APP_DESCRIPTION = "A description of the web application."
 BACKGROUND_COLOR = "#ffffff"
 THEME_COLOR = "#007bff"
-VERSION = "1.0.8"
+VERSION = "1.0.9"
 
 def get_file_hash(path):
     hasher = hashlib.md5()
@@ -25,11 +25,26 @@ def get_file_hash(path):
         print(f"   ❌ Could not hash file {os.path.basename(path)}: {e}")
         return None
 
+def generate_favicon(source_path, output_dir):
+    print("--- 1A. Generating favicon.ico ---")
+    favicon_path = os.path.join(output_dir, "favicon.ico")
+    try:
+        with Image.open(source_path) as logo:
+            logo = logo.convert("RGBA")
+            logo.thumbnail((64, 64))  # Standard favicon size
+            logo.save(favicon_path, format="ICO", sizes=[(16, 16), (32, 32), (48, 48), (64, 64)])
+        print(f"✅ Created: favicon.ico")
+        file_hash = get_file_hash(favicon_path)
+        return {"url": "favicon.ico", "revision": file_hash} if file_hash else None
+    except Exception as e:
+        print(f"❌ Error generating favicon.ico: {e}")
+        return None
+
 def generate_pwa_icons(source_path, output_dir):
     print("--- 1. Generating PWA Icons ---")
     if not os.path.exists(source_path):
         print(f"❌ Error: Source logo not found at '{source_path}'.")
-        return []
+        return [], []
     icon_sizes = [72, 96, 128, 144, 152, 192, 384, 512]
     generated_icons = []
     icon_metadata = []
@@ -123,7 +138,6 @@ importScripts('https://storage.googleapis.com/workbox-cdn/releases/7.0.0/workbox
 if (workbox) {{
     console.log(`Workbox is loaded.`);
     
-    // This message listener waits for a command from the web page to activate.
     self.addEventListener('message', (event) => {{
       if (event.data && event.data.type === 'SKIP_WAITING') {{
         console.log('Service Worker received SKIP_WAITING message, activating now.');
@@ -164,26 +178,23 @@ if (workbox) {{
 def update_html_files(html_files):
     print("\n--- 5. Updating HTML Files ---")
     manifest_link_str = '<link rel="manifest" href="manifest.json">'
+    favicon_link_str = '<link rel="icon" type="image/x-icon" href="favicon.ico">'
     sw_script_str = f"""<script type="module">
   import {{ Workbox }} from 'https://storage.googleapis.com/workbox-cdn/releases/7.0.0/workbox-window.prod.mjs';
 
   const swUrl = './sw.js';
   const wb = new Workbox(swUrl);
 
-  // This event fires when a new service worker has installed but is waiting to activate.
-  wb.addEventListener('waiting', (event) => {{
+  wb.addEventListener('waiting', () => {{
     console.log('A new service worker is waiting to activate.');
-    // This sends a message to the waiting service worker, telling it to activate.
     wb.messageSW({{ type: 'SKIP_WAITING' }});
   }});
 
-  // This event fires when the new service worker has taken control.
-  wb.addEventListener('controlling', (event) => {{
+  wb.addEventListener('controlling', () => {{
     console.log('The new service worker is now in control. Reloading page for updates...');
     window.location.reload();
   }});
 
-  // Register the service worker.
   wb.register();
 </script>"""
     for html_path in html_files:
@@ -191,16 +202,22 @@ def update_html_files(html_files):
             with open(html_path, 'r+', encoding='utf-8', errors='ignore') as f:
                 content = f.read()
                 soup = BeautifulSoup(content, 'html.parser')
+
                 for s in soup.find_all("script"):
                     if "workbox-window" in s.text or "navigator.serviceWorker" in s.text:
                         s.decompose()
+
                 soup.body.append(BeautifulSoup(sw_script_str, 'html.parser'))
+
                 if not soup.head.find('link', {'rel': 'manifest'}):
                     soup.head.append(BeautifulSoup(manifest_link_str, 'html.parser'))
+                if not soup.head.find('link', {'rel': 'icon'}):
+                    soup.head.append(BeautifulSoup(favicon_link_str, 'html.parser'))
+
                 f.seek(0)
                 f.write(str(soup))
                 f.truncate()
-                print(f"   - Injected Workbox update script into {os.path.basename(html_path)}")
+                print(f"   - Injected scripts & links into {os.path.basename(html_path)}")
         except Exception as e:
             print(f"   ❌ Could not update {os.path.basename(html_path)}: {e}")
     print("✅ HTML files updated.")
@@ -213,8 +230,10 @@ if __name__ == "__main__":
             f.write("<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><title>Offline</title></head><body><h1>You are offline.</h1></body></html>")
         print("✅ Created 'offline.html'.")
 
+    favicon_entry = generate_favicon(SOURCE_LOGO_PATH, PROJECT_DIR)
     generated_icons, icon_metadata = generate_pwa_icons(SOURCE_LOGO_PATH, PROJECT_DIR)
-    precache_list, html_files = discover_assets(PROJECT_DIR, generated_icons)
+
+    precache_list, html_files = discover_assets(PROJECT_DIR, generated_icons + ([favicon_entry] if favicon_entry else []))
     
     if html_files:
         create_manifest(PROJECT_DIR, icon_metadata, html_files)

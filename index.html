@@ -670,6 +670,7 @@
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="manifest.json" rel="manifest" />
+    <link href="favicon.ico" rel="icon" type="image/x-icon" />
 </head>
 
 <body>
@@ -3592,27 +3593,22 @@
         document.getElementById('auto-backup').addEventListener('change', scheduleAutoBackup);
         initDB();
     </script>
-
     <script type="module">
         import { Workbox } from 'https://storage.googleapis.com/workbox-cdn/releases/7.0.0/workbox-window.prod.mjs';
 
         const swUrl = './sw.js';
         const wb = new Workbox(swUrl);
 
-        // This event fires when a new service worker has installed but is waiting to activate.
-        wb.addEventListener('waiting', (event) => {
+        wb.addEventListener('waiting', () => {
             console.log('A new service worker is waiting to activate.');
-            // This sends a message to the waiting service worker, telling it to activate.
             wb.messageSW({ type: 'SKIP_WAITING' });
         });
 
-        // This event fires when the new service worker has taken control.
-        wb.addEventListener('controlling', (event) => {
+        wb.addEventListener('controlling', () => {
             console.log('The new service worker is now in control. Reloading page for updates...');
             window.location.reload();
         });
 
-        // Register the service worker.
         wb.register();
     </script>
 </body>
